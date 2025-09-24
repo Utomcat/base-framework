@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.5.6</version>
+        <relativePath/>
+    </parent>
+
+    <groupId>com.ranyk</groupId>
+    <artifactId>base</artifactId>
+    <version>${revision}</version>
+
+    <name>base</name>
+    <description>JAVA 后端框架</description>
+
+    <modules>
+        <module>core</module>
+        <module>common</module>
+        <module>entrance</module>
+        <module>authorization</module>
+        <module>model</module>
+    </modules>
+
+    <packaging>pom</packaging>
+
+    <url/>
+
+    <licenses>
+        <license>
+            <name>Apache-2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+            <comments>A business-friendly OSS license</comments>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>developer1</id>
+            <name>ranyk</name>
+            <email>13547180017@163.com</email>
+            <url>https://www.example.com</url>
+            <organization>Ranyk</organization>
+            <organizationUrl>https://www.example.com</organizationUrl>
+            <roles>
+                <role>developer1</role>
+                <role>developer2</role>
+            </roles>
+            <timezone>+8</timezone>
+            <properties>
+                <picUrl>https://www.example.com</picUrl>
+            </properties>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection/>
+        <developerConnection/>
+        <tag/>
+        <url/>
+    </scm>
+
+    <profiles>
+        <profile>
+            <id>local</id>
+            <properties>
+                <!-- 环境标识，需要与配置文件的名称相对应 -->
+                <profiles.active>local</profiles.active>
+                <logging.level>info</logging.level>
+                <monitor.username>root</monitor.username>
+                <monitor.password>123456</monitor.password>
+            </properties>
+        </profile>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <!-- 环境标识，需要与配置文件的名称相对应 -->
+                <profiles.active>dev</profiles.active>
+                <logging.level>info</logging.level>
+                <monitor.username>root</monitor.username>
+                <monitor.password>123456</monitor.password>
+            </properties>
+            <activation>
+                <!-- 默认环境 -->
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <profiles.active>prod</profiles.active>
+                <logging.level>warn</logging.level>
+                <monitor.username>root</monitor.username>
+                <monitor.password>123456</monitor.password>
+            </properties>
+        </profile>
+    </profiles>
+
+    <properties>
+        <!-- 项目版本号 -->
+        <revision>0.0.1-SNAPSHOT</revision>
+        <!-- 项目依赖的 java 语言版本 -->
+        <java.version>21</java.version>
+        <!-- 字符集编码值 -->
+        <character.version>UTF-8</character.version>
+        <!-- 项目依赖的 spring-boot 框架版本 -->
+        <spring-boot.version>3.5.6</spring-boot.version>
+        <!-- 项目依赖的 hutool 版本 -->
+        <hutool.version>5.8.40</hutool.version>
+        <!-- 项目依赖的 lombok 版本 -->
+        <lombok.version>1.18.42</lombok.version>
+        <!-- 项目 maven 源代码编译 jdk 版本 -->
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <!-- 项目 maven 目标代码编译 jdk 版本 -->
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <!-- 项目构建源码字符集编码配置 -->
+        <project.build.sourceEncoding>${character.version}</project.build.sourceEncoding>
+        <!-- 项目报告输出字符集编码配置 -->
+        <project.reporting.outputEncoding>${character.version}</project.reporting.outputEncoding>
+        <!-- maven 项目编译字符集编码配置 -->
+        <maven.compile.encoding>${character.version}</maven.compile.encoding>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- hutool 的依赖配置-->
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-all</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+
+            <!-- lombok 的依赖配置-->
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+            </dependency>
+
+            <!-- spring-boot 单元测试 的依赖配置-->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-test</artifactId>
+                <version>${spring-boot.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <!-- spring-boot web 的依赖配置-->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-web</artifactId>
+                <version>${spring-boot.version}</version>
+            </dependency>
+
+            <!-- spring-boot jpa 的依赖配置-->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-data-jpa</artifactId>
+                <version>${spring-boot.version}</version>
+            </dependency>
+
+            <!-- 核心模块 -->
+            <dependency>
+                <groupId>com.ranyk</groupId>
+                <artifactId>core</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <!-- 公共模块 -->
+            <dependency>
+                <groupId>com.ranyk</groupId>
+                <artifactId>common</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <!-- 授权模块 -->
+            <dependency>
+                <groupId>com.ranyk</groupId>
+                <artifactId>authorization</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <!-- 入口模块 -->
+            <dependency>
+                <groupId>com.ranyk</groupId>
+                <artifactId>entrance</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <!-- 模型/实体类模块 -->
+            <dependency>
+                <groupId>com.ranyk</groupId>
+                <artifactId>model</artifactId>
+                <version>${revision}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <!-- 父模块用 pluginManagement 统一管理插件版本 -->
+        <pluginManagement>
+            <plugins>
+                <!-- Maven 编译插件：解决注解处理器问题 + 指定 JDK 版本 -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <!-- 与 Spring Boot 3.5.6 兼容的版本 -->
+                    <version>3.11.0</version>
+                    <configuration>
+                        <!-- 你的 JDK 版本，如 17 -->
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
+                        <!-- 编译编码，避免中文乱码 -->
+                        <encoding>${character.version}</encoding>
+                        <!-- 关键：指定注解处理器路径（包含 Lombok 等处理器） -->
+                        <annotationProcessorPaths>
+                            <!-- Lombok 注解处理器 -->
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <!-- 与你的 Lombok 版本一致 -->
+                                <version>${lombok.version}</version>
+                            </path>
+                        </annotationProcessorPaths>
+                        <!-- 可选：关闭不必要的编译警告 -->
+                        <compilerArgs>
+                            <!-- 关闭 “未指定处理器” 的提示 -->
+                            <arg>-Xlint:-options</arg>
+                        </compilerArgs>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+</project>

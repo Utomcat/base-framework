@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.ranyk</groupId>
+        <artifactId>base</artifactId>
+        <version>${revision}</version>
+    </parent>
+
+    <artifactId>common</artifactId>
+
+    <name>common</name>
+    <description>通用模块</description>
+
+    <packaging>jar</packaging>
+
+    <properties>
+        <!-- 项目 maven 源代码编译 jdk 版本 -->
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <!-- 项目 maven 目标代码编译 jdk 版本 -->
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <!-- 项目构建源码字符集编码配置 -->
+        <project.build.sourceEncoding>${character.version}</project.build.sourceEncoding>
+        <!-- 项目报告输出字符集编码配置 -->
+        <project.reporting.outputEncoding>${character.version}</project.reporting.outputEncoding>
+        <!-- maven 项目编译字符集编码配置 -->
+        <maven.compile.encoding>${character.version}</maven.compile.encoding>
+    </properties>
+
+    <dependencies>
+        <!-- Spring 框架基本的核心工具 -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+        </dependency>
+
+    </dependencies>
+
+</project>
