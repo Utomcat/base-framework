@@ -1,0 +1,21 @@
+cache:
+  # 是否启用缓存, true: 启用缓存; false: 关闭缓存;
+  enabled: true
+  # 是否启用 Caffeine 缓存, true: 启用 Caffeine 缓存; false: 关闭 Caffeine 缓存;
+  caffeine-enabled: true
+  # Caffeine 缓存初始大小
+  caffeine-init-size: 100
+  # Caffeine 缓存最大大小
+  caffeine-max-size: 1000
+  # 是否输出 Caffeine 移除缓存日志, true: 输出 Caffeine 缓存日志; false: 不输出 Caffeine 缓存日志;
+  is-out-put-log-war: false
+  # 是否启用 Redis 缓存, true: 启用 Redis 缓存; false: 关闭 Redis 缓存;
+  redis-enabled: false
+  # Redis 缓存主机地址配置
+  redis-host: localhost
+  # Redis 缓存主机端口
+  redis-port: 6379
+  # Redis 缓存数据库密码
+  redis-password: <PASSWORD>
+  # Redis 缓存数据库索引
+  redis-database: 0
