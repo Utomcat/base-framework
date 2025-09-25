@@ -2,6 +2,7 @@ package com.ranyk;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
 /**
  * CLASS_NAME: ApplicationEntrance.java
@@ -12,6 +13,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @date: 2025-09-25
  */
 @SpringBootApplication
+@EnableConfigurationProperties
 public class ApplicationEntrance {
 
     public static void main(String[] args) {
