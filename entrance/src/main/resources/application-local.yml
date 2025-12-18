@@ -2,3 +2,51 @@
 logging:
   # 使用日志配置文件进行配置日志输出格式和对应的文件路径保存路径
   config: classpath:logback-local.xml
+
+# Spring 配置
+spring:
+  # 数据源配置
+  datasource:
+    # 使用的数据源类型
+    type: com.zaxxer.hikari.HikariDataSource
+    # 数据库连接驱动
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    # 数据库连接 URL
+    url: jdbc:mysql://127.0.0.1:3306/framework?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    # 数据库连接用户名
+    username: user
+    # 数据库连接密码
+    password: 123456
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    # jpa 其他属性配置
+    properties:
+      # 配置 hibernate 属性
+      hibernate:
+        # 设置数据库方言
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        # 格式化 SQL 语句
+        format_sql: true
+        hbm2ddl:
+          auto: update
+        # 禁用字段字母排序，按实体类声明顺序生成
+        property-ordering: legacy
+  # 国际化消息源配置（Spring Boot 3 自动识别）
+  messages:
+    # 配置文件前缀：默认是 messages（对应 resources/messages_*.properties）; 若文件在i18n目录下，改为：basename: i18n/messages
+    basename: i18n/messages
+    # 关键：必须设为UTF-8，避免中文乱码
+    encoding: UTF-8
+    # 缓存时间：开发时设0（修改配置立即生效），生产可设3600（1小时）
+    cache-duration: PT0S
+
+# 自定义语言环境
+lang:
+  # 语言环境, 参见 Locale 类中的常量配置,
+  # 中文除配置为 zh_CN 外,还可以配置为 CHINA;
+  # 英文可以配置为 ENGLISH 、 US 、en_US;
+  # 其余语言参考 Locale 类,
+  # 当前只配置了 只配置了三种语言,需要新增其他语种时需要对 I18nConfigProperties 类中增加 switch 属性分支,同时需要增加对应的语言环境配置文件,参考  common/src/main/resources/i18n/messages_en_US.properties 或 common/src/main/resources/i18n/messages_zh_CN.properties 文件
+  local-lang: US

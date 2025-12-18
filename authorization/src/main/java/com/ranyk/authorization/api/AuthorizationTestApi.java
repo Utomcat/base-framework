@@ -1,5 +1,7 @@
 package com.ranyk.authorization.api;
 
+import com.ranyk.model.business.login.vo.TestOneVO;
+import com.ranyk.model.response.R;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,11 +20,12 @@ public class AuthorizationTestApi {
 
     /**
      * 测试接口 one
-     * @return java.lang.String
+     *
+     * @return 返回结果 {@link TestOneVO}
      */
     @GetMapping("/one")
-    public String one() {
-        return "授权模块测试接口 one";
+    public R<TestOneVO> one() {
+        return R.ok(TestOneVO.builder().result("授权模块测试接口 one").build());
     }
 
 }
