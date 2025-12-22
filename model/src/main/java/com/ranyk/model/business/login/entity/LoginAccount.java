@@ -48,7 +48,7 @@ public class LoginAccount implements Serializable {
      * 登录账户状态: -2: 停用/注销; -1: 禁用; 0: 锁定; 1: 启用;
      */
     @Column(name = "login_account_status", nullable = false, columnDefinition = "TINYINT DEFAULT 0 COMMENT '登录账户状态: -2: 停用/注销; -1: 禁用; 0: 锁定; 1: 启用;'")
-    private byte accountStatus;
+    private Integer accountStatus;
     /**
      * 数据创建时间
      */

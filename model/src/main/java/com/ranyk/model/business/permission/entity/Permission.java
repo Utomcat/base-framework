@@ -48,7 +48,7 @@ public class Permission implements Serializable {
      * 权限状态: 1: 正常(默认); -1: 删除/停用;
      */
     @Column(name = "permission_status", nullable = false, columnDefinition = "TINYINT DEFAULT 1 COMMENT '权限状态: 1: 正常(默认); -1: 删除/停用;'")
-    private byte permissionStatus;
+    private Integer permissionStatus;
     /**
      * 数据创建时间
      */

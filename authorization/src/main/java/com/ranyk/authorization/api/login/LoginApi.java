@@ -1,8 +1,8 @@
-package com.ranyk.authorization.api;
+package com.ranyk.authorization.api.login;
 
-import com.ranyk.authorization.service.LoginService;
+import com.ranyk.authorization.service.login.LoginService;
 import com.ranyk.model.business.login.dto.LoginAccountDTO;
-import com.ranyk.model.business.login.vo.LoginAccountVO;
+import com.ranyk.model.business.login.vo.LoginAccountInfoVO;
 import com.ranyk.model.response.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -43,10 +43,10 @@ public class LoginApi {
      * @return 登录结果
      */
     @PostMapping
-    public R<LoginAccountVO> login(LoginAccountDTO loginAccountDTO) {
+    public R<LoginAccountInfoVO> login(LoginAccountDTO loginAccountDTO) {
         // 调用登录业务逻辑
         LoginAccountDTO loginResult = loginService.login(loginAccountDTO);
         // 构造返回结果对象
-        return R.ok(LoginAccountVO.builder().tokenName(loginResult.getTokenName()).tokenValue(loginResult.getTokenValue()).build());
+        return R.ok(LoginAccountInfoVO.builder().tokenName(loginResult.getTokenName()).tokenValue(loginResult.getTokenValue()).build());
     }
 }

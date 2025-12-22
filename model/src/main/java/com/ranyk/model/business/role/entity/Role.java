@@ -48,7 +48,7 @@ public class Role implements Serializable {
      * 角色状态: 1: 正常(默认); -1: 删除/停用;
      */
     @Column(name = "role_status", nullable = false, columnDefinition = "TINYINT DEFAULT 1 COMMENT '角色状态: 1: 正常(默认); -1: 删除/停用;'")
-    private byte roleStatus;
+    private Integer roleStatus;
     /**
      * 数据创建时间
      */

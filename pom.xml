@@ -215,6 +215,13 @@
                 <version>${sa-token.version}</version>
             </dependency>
 
+            <!-- Sa-Token 注解支持（可选，如需使用 @SaCheckLogin 等注解则加） -->
+            <dependency>
+                <groupId>cn.dev33</groupId>
+                <artifactId>sa-token-spring-aop</artifactId>
+                <version>${sa-token.version}</version>
+            </dependency>
+
             <!-- 核心模块 -->
             <dependency>
                 <groupId>com.ranyk</groupId>

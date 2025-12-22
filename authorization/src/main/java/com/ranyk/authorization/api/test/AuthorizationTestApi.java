@@ -1,4 +1,4 @@
-package com.ranyk.authorization.api;
+package com.ranyk.authorization.api.test;
 
 import com.ranyk.model.business.login.vo.TestOneVO;
 import com.ranyk.model.response.R;

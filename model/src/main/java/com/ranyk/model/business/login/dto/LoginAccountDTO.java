@@ -39,7 +39,7 @@ public class LoginAccountDTO implements Serializable {
     /**
      * 登录账户状态: -2: 停用/注销; -1: 禁用; 0: 锁定; 1: 启用;
      */
-    private byte accountStatus;
+    private Integer accountStatus;
     /**
      * 登录成功后的 SA-TOKEN 认证令牌 token 名称
      */
@@ -64,4 +64,12 @@ public class LoginAccountDTO implements Serializable {
      * 账户数据更新人 ID
      */
     private Long updateId;
+    /**
+     * 查询的当前页码, 默认 0 (当前页码 - 1)
+     */
+    private Integer pageNum = 0;
+    /**
+     * 查询的每页数量, 默认 10
+     */
+    private Integer pageSize = 10;
 }

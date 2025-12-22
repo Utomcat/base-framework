@@ -49,4 +49,4 @@ lang:
   # 英文可以配置为 ENGLISH 、 US 、en_US;
   # 其余语言参考 Locale 类,
   # 当前只配置了 只配置了三种语言,需要新增其他语种时需要对 I18nConfigProperties 类中增加 switch 属性分支,同时需要增加对应的语言环境配置文件,参考  common/src/main/resources/i18n/messages_en_US.properties 或 common/src/main/resources/i18n/messages_zh_CN.properties 文件
-  local-lang: US
+  local-lang: zh_CN

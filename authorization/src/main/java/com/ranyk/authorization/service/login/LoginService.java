@@ -1,9 +1,9 @@
-package com.ranyk.authorization.service;
+package com.ranyk.authorization.service.login;
 
 import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.crypto.digest.DigestUtil;
-import com.ranyk.authorization.repository.LoginRepository;
+import com.ranyk.authorization.repository.loginAccount.LoginAccountRepository;
 import com.ranyk.model.business.login.dto.LoginAccountDTO;
 import com.ranyk.model.business.login.entity.LoginAccount;
 import com.ranyk.model.exception.user.UserException;
@@ -26,7 +26,7 @@ public class LoginService {
     /**
      * 登录业务数据库操作对象
      */
-    private final LoginRepository loginRepository;
+    private final LoginAccountRepository loginAccountRepository;
 
     /**
      * 构造方法
@@ -34,8 +34,8 @@ public class LoginService {
      * @param loginRepository 登录业务数据库操作对象
      */
     @Autowired
-    public LoginService(LoginRepository loginRepository) {
-        this.loginRepository = loginRepository;
+    public LoginService(LoginAccountRepository loginAccountRepository) {
+        this.loginAccountRepository = loginAccountRepository;
     }
 
 
@@ -47,7 +47,7 @@ public class LoginService {
      */
     public LoginAccountDTO login(LoginAccountDTO loginDTO) {
         // 通过传入的用户名和密码进行用户对象的查询, 当未查询到时, 返回一个新建的 Login 对象, 此对象没有数据 id
-        LoginAccount login = loginRepository.findByUserNameAndPassword(loginDTO.getUserName(), DigestUtil.md5Hex(loginDTO.getPassword())).orElse(LoginAccount.builder().build());
+        LoginAccount login = loginAccountRepository.findByUserNameAndPassword(loginDTO.getUserName(), DigestUtil.md5Hex(loginDTO.getPassword())).orElse(LoginAccount.builder().build());
         // 判断是否存在用户 id
         if (Objects.isNull(login.getId())){
             // 不存在用户 id 则抛出用户登录异常

@@ -19,6 +19,6 @@ public class CaptchaExpireException extends UserException{
      * 创建一个 CaptchaExpireException 实例对象
      */
     public CaptchaExpireException() {
-        super("user.jcaptcha.expire");
+        super("user.captcha.expire");
     }
 }

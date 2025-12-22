@@ -1,6 +1,6 @@
-package com.ranyk.authorization.api;
+package com.ranyk.authorization.api.logout;
 
-import com.ranyk.authorization.service.LogoutService;
+import com.ranyk.authorization.service.logout.LogoutService;
 import com.ranyk.model.response.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;

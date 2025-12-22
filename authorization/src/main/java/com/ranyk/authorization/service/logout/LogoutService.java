@@ -1,4 +1,4 @@
-package com.ranyk.authorization.service;
+package com.ranyk.authorization.service.logout;
 
 import cn.dev33.satoken.stp.StpUtil;
 import org.springframework.stereotype.Service;
