@@ -1,6 +1,6 @@
 package com.ranyk.authorization.repository.account;
 
-import com.ranyk.model.business.login.entity.AccountRoleConnection;
+import com.ranyk.model.business.account.entity.AccountRoleConnection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.CrudRepository;

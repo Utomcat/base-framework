@@ -1,4 +1,4 @@
-package com.ranyk.model.business.login.entity;
+package com.ranyk.model.business.account.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

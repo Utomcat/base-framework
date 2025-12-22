@@ -1,4 +1,4 @@
-package com.ranyk.model.business.login.dto;
+package com.ranyk.model.business.account.dto;
 
 import lombok.*;
 

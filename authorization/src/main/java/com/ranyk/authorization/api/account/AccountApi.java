@@ -1,8 +1,8 @@
 package com.ranyk.authorization.api.account;
 
 import com.ranyk.authorization.service.account.AccountService;
-import com.ranyk.model.business.login.dto.AccountDTO;
-import com.ranyk.model.business.login.vo.AccountVO;
+import com.ranyk.model.business.account.dto.AccountDTO;
+import com.ranyk.model.business.account.vo.AccountVO;
 import com.ranyk.model.page.vo.PageVO;
 import com.ranyk.model.response.R;
 import org.springframework.beans.factory.annotation.Autowired;

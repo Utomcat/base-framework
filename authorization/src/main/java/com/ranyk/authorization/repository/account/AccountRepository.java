@@ -1,6 +1,6 @@
 package com.ranyk.authorization.repository.account;
 
-import com.ranyk.model.business.login.entity.Account;
+import com.ranyk.model.business.account.entity.Account;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;

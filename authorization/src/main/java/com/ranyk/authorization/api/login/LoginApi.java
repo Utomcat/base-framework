@@ -1,7 +1,7 @@
 package com.ranyk.authorization.api.login;
 
 import com.ranyk.authorization.service.login.LoginService;
-import com.ranyk.model.business.login.dto.AccountDTO;
+import com.ranyk.model.business.account.dto.AccountDTO;
 import com.ranyk.model.business.login.vo.LoginAccountInfoVO;
 import com.ranyk.model.response.R;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +57,7 @@ public class LoginApi {
     /**
      * 用户登录接口
      *
-     * @param accountDTO 登录参数封装对象 {@link com.ranyk.model.business.login.dto.AccountDTO}
+     * @param accountDTO 登录参数封装对象 {@link AccountDTO}
      * @return 登录结果
      */
     @PostMapping

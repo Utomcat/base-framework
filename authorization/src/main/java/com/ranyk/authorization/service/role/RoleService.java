@@ -4,7 +4,7 @@ import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.bean.BeanUtil;
 import com.ranyk.authorization.repository.role.RoleRepository;
 import com.ranyk.authorization.service.account.AccountRoleConnectionService;
-import com.ranyk.model.business.login.dto.AccountRoleConnectionDTO;
+import com.ranyk.model.business.account.dto.AccountRoleConnectionDTO;
 import com.ranyk.model.business.role.dto.RoleDTO;
 import com.ranyk.model.business.role.entity.Role;
 import lombok.extern.slf4j.Slf4j;

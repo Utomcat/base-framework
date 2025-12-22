@@ -2,8 +2,8 @@ package com.ranyk.authorization.service.account;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.ranyk.authorization.repository.account.AccountRoleConnectionRepository;
-import com.ranyk.model.business.login.dto.AccountRoleConnectionDTO;
-import com.ranyk.model.business.login.entity.AccountRoleConnection;
+import com.ranyk.model.business.account.dto.AccountRoleConnectionDTO;
+import com.ranyk.model.business.account.entity.AccountRoleConnection;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

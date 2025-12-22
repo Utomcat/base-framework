@@ -3,7 +3,7 @@ package com.ranyk.authorization.service.login;
 import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import com.ranyk.authorization.service.account.AccountService;
-import com.ranyk.model.business.login.dto.AccountDTO;
+import com.ranyk.model.business.account.dto.AccountDTO;
 import com.ranyk.model.exception.user.UserException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
