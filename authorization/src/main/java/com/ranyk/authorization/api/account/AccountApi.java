@@ -1,8 +1,8 @@
-package com.ranyk.authorization.api.loginAccount;
+package com.ranyk.authorization.api.account;
 
-import com.ranyk.authorization.service.loginAccount.LoginAccountService;
-import com.ranyk.model.business.login.dto.LoginAccountDTO;
-import com.ranyk.model.business.login.vo.LoginAccountVO;
+import com.ranyk.authorization.service.account.AccountService;
+import com.ranyk.model.business.login.dto.AccountDTO;
+import com.ranyk.model.business.login.vo.AccountVO;
 import com.ranyk.model.page.vo.PageVO;
 import com.ranyk.model.response.R;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * CLASS_NAME: LoginAccountApi.java
+ * CLASS_NAME: AccountApi.java
  *
  * @author ranyk
  * @version V1.0
@@ -73,68 +73,68 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/account")
-public class LoginAccountApi {
+public class AccountApi {
 
     /**
      * 登录账户业务逻辑类对象
      */
-    private final LoginAccountService loginAccountService;
+    private final AccountService accountService;
 
     /**
      * 构造方法
      *
-     * @param loginAccountService 登录账户业务逻辑类对象
+     * @param accountService 登录账户业务逻辑类对象
      */
     @Autowired
-    public LoginAccountApi(LoginAccountService loginAccountService) {
-        this.loginAccountService = loginAccountService;
+    public AccountApi(AccountService accountService) {
+        this.accountService = accountService;
     }
 
     /**
      * 新增账户信息
      *
-     * @param loginAccountDTO 登录账户信息封装对象, {@link LoginAccountDTO}
+     * @param accountDTO 登录账户信息封装对象, {@link AccountDTO}
      * @return 新增账户信息结果
      */
     @PostMapping
-    public R<String> addLoginAccount(@RequestBody LoginAccountDTO loginAccountDTO) {
-        loginAccountService.addLoginAccount(loginAccountDTO);
+    public R<String> addLoginAccount(@RequestBody AccountDTO accountDTO) {
+        accountService.addLoginAccount(accountDTO);
         return R.ok("新增账户成功!");
     }
 
     /**
      * 登录账户注销
      *
-     * @param loginAccountDTOList 需要注销的登录账户信息封装对象 List 集合, 单个参见 {@link LoginAccountDTO}
+     * @param accountDTOList 需要注销的登录账户信息封装对象 List 集合, 单个参见 {@link AccountDTO}
      * @return 返回注销账户信息结果
      */
     @DeleteMapping
-    public R<String> revokedLoginAccount(@RequestBody List<LoginAccountDTO> loginAccountDTOList) {
-        loginAccountService.revokedLoginAccount(loginAccountDTOList);
+    public R<String> revokedLoginAccount(@RequestBody List<AccountDTO> accountDTOList) {
+        accountService.revokedLoginAccount(accountDTOList);
         return R.ok("注销账户成功!");
     }
 
     /**
      * 修改账户信息
      *
-     * @param loginAccountDTOList 修改的账户信息封装对象 List 集合, 单个参见 {@link LoginAccountDTO}
+     * @param accountDTOList 修改的账户信息封装对象 List 集合, 单个参见 {@link AccountDTO}
      * @return 修改账户信息结果
      */
     @PutMapping
-    public R<String> updateLoginAccount(@RequestBody List<LoginAccountDTO> loginAccountDTOList) {
-        loginAccountService.updateLoginAccount(loginAccountDTOList);
+    public R<String> updateLoginAccount(@RequestBody List<AccountDTO> accountDTOList) {
+        accountService.updateLoginAccount(accountDTOList);
         return R.ok("修改账户成功!");
     }
 
     /**
      * 查询账户信息
      *
-     * @param loginAccountDTO 查询条件封装对象, 单个参见 {@link LoginAccountDTO}, 主要是 登录用户名、账户状态两种查询条件
-     * @return 查询账户信息结果 List 集合,单个参见 {@link LoginAccountVO}
+     * @param accountDTOList 查询条件封装对象, 单个参见 {@link AccountDTO}, 主要是 登录用户名、账户状态两种查询条件
+     * @return 查询账户信息结果 List 集合,单个参见 {@link AccountVO}
      */
     @GetMapping
-    public R<PageVO<List<LoginAccountVO>>> queryLoginAccount(LoginAccountDTO loginAccountDTO) {
-        return R.ok(loginAccountService.queryLoginAccount(loginAccountDTO));
+    public R<PageVO<List<AccountVO>>> queryLoginAccount(AccountDTO accountDTOList) {
+        return R.ok(accountService.queryLoginAccount(accountDTOList));
     }
 
 

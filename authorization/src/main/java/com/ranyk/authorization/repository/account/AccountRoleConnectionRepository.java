@@ -1,7 +1,8 @@
-package com.ranyk.authorization.repository.loginAccount;
+package com.ranyk.authorization.repository.account;
 
 import com.ranyk.model.business.login.entity.AccountRoleConnection;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -16,7 +17,7 @@ import java.util.List;
  * @date: 2025-12-18
  */
 @Repository
-public interface AccountRoleConnectionRepository extends JpaRepository<AccountRoleConnection, Long>, CrudRepository<AccountRoleConnection, Long> {
+public interface AccountRoleConnectionRepository extends JpaRepository<AccountRoleConnection, Long>, CrudRepository<AccountRoleConnection, Long>, JpaSpecificationExecutor<AccountRoleConnection> {
 
     /**
      * 通过账户 ID 查询该账户下的 账户角色关联信息

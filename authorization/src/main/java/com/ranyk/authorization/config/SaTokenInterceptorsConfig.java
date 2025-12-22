@@ -42,7 +42,7 @@ public class SaTokenInterceptorsConfig implements WebMvcConfigurer {
                 }))
                 // 拦截所有请求路径
                 .addPathPatterns("/**")
-                // 忽略所有无需鉴权的接口
+                // 忽略所有无需鉴权的接口 登录接口、静态资源接口、图标接口
                 .excludePathPatterns("/login", "/static/**", "/favicon.ico");
     }
 }

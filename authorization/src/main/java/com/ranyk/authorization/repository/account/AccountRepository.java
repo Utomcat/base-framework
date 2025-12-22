@@ -1,6 +1,6 @@
-package com.ranyk.authorization.repository.loginAccount;
+package com.ranyk.authorization.repository.account;
 
-import com.ranyk.model.business.login.entity.LoginAccount;
+import com.ranyk.model.business.login.entity.Account;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -21,7 +21,7 @@ import java.util.Optional;
  * @date: 2025-10-10
  */
 @Repository
-public interface LoginAccountRepository extends JpaRepository<LoginAccount, Long>, CrudRepository<LoginAccount, Long>, JpaSpecificationExecutor<LoginAccount> {
+public interface AccountRepository extends JpaRepository<Account, Long>, CrudRepository<Account, Long>, JpaSpecificationExecutor<Account> {
 
     /**
      * 通过账户名和密码查询有效的账户信息
@@ -31,7 +31,7 @@ public interface LoginAccountRepository extends JpaRepository<LoginAccount, Long
      * @param accountStatus 账户状态
      * @return 用户信息
      */
-    Optional<LoginAccount> findByUserNameAndPasswordAndAccountStatusEquals(String userName, String password, Integer accountStatus);
+    Optional<Account> findByUserNameAndPasswordAndAccountStatusEquals(String userName, String password, Integer accountStatus);
 
     /**
      * 查询是否存在一条指定账户名的数据
@@ -58,6 +58,6 @@ public interface LoginAccountRepository extends JpaRepository<LoginAccount, Long
      * @return 返回注销的账户数量
      */
     @Modifying
-    @Query("UPDATE LoginAccount la SET la.accountStatus = :newStatus WHERE la.id IN :ids AND la.accountStatus != -2")
+    @Query("UPDATE Account la SET la.accountStatus = :newStatus WHERE la.id IN :ids AND la.accountStatus != -2")
     int batchDeregistrationAccountStatusByIds(@Param("ids") List<Long> ids, @Param("newStatus") Integer newStatus);
 }

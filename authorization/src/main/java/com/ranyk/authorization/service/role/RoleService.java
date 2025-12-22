@@ -2,9 +2,9 @@ package com.ranyk.authorization.service.role;
 
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.bean.BeanUtil;
-import com.ranyk.authorization.repository.loginAccount.AccountRoleConnectionRepository;
 import com.ranyk.authorization.repository.role.RoleRepository;
-import com.ranyk.model.business.login.entity.AccountRoleConnection;
+import com.ranyk.authorization.service.account.AccountRoleConnectionService;
+import com.ranyk.model.business.login.dto.AccountRoleConnectionDTO;
 import com.ranyk.model.business.role.dto.RoleDTO;
 import com.ranyk.model.business.role.entity.Role;
 import lombok.extern.slf4j.Slf4j;
@@ -29,9 +29,9 @@ import java.util.Optional;
 public class RoleService {
 
     /**
-     * 账号角色关联信息数据库操作类
+     * 账号角色关联信息业务逻辑类
      */
-    private final AccountRoleConnectionRepository accountRoleConnectionRepository;
+    private final AccountRoleConnectionService accountRoleConnectionService;
     /**
      * 角色信息数据库操作类
      */
@@ -40,12 +40,12 @@ public class RoleService {
     /**
      * 构造函数
      *
-     * @param accountRoleConnectionRepository 账号角色关联信息数据库操作类
-     * @param roleRepository                  角色信息数据库操作类
+     * @param accountRoleConnectionService 账号角色关联信息业务逻辑类
+     * @param roleRepository               角色信息数据库操作类
      */
     @Autowired
-    public RoleService(AccountRoleConnectionRepository accountRoleConnectionRepository, RoleRepository roleRepository) {
-        this.accountRoleConnectionRepository = accountRoleConnectionRepository;
+    public RoleService(AccountRoleConnectionService accountRoleConnectionService, RoleRepository roleRepository) {
+        this.accountRoleConnectionService = accountRoleConnectionService;
         this.roleRepository = roleRepository;
     }
 
@@ -56,7 +56,7 @@ public class RoleService {
      */
     public List<RoleDTO> getCurrentUsersRoleList() {
         // 1. 获取当前登录账户的账户 ID, 将其转换为 Long 类型
-        Long longinId = Long.valueOf(String.valueOf(StpUtil.getLoginId()));
+        Long longinId = StpUtil.getLoginIdAsLong();
         // 2. 通过账户 ID 获取该账户下拥有的角色信息
         return getRoleListByAccountId(longinId);
     }
@@ -74,9 +74,9 @@ public class RoleService {
             return Collections.emptyList();
         }
         // 2. 通过传入的 账户 ID 获取该 账户ID 下拥有的 角色 ID
-        List<AccountRoleConnection> accountRoleConnectionList = Optional.of(accountRoleConnectionRepository.findAllByAccountIdEquals(accountId)).orElse(Collections.emptyList());
+        List<AccountRoleConnectionDTO> accountRoleConnectionList = accountRoleConnectionService.queryAccountRoleConnectionByAccountId(accountId);
         // 3. 从 accountRoleConnectionList 中获取 roleId List 集合
-        List<Long> roleIds = accountRoleConnectionList.stream().map(AccountRoleConnection::getRoleId).toList();
+        List<Long> roleIds = accountRoleConnectionList.stream().map(AccountRoleConnectionDTO::getRoleId).toList();
         // 4. 当 roleIds 为空,则返回空 List 集合, 说明没有角色 列表
         if (roleIds.isEmpty()) {
             log.error("未获取到该账户下的角色 ID, 直接返回空角色列表!");

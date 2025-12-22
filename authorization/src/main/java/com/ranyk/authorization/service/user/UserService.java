@@ -173,7 +173,7 @@ public class UserService {
         userBaseList.forEach(userBase -> {
             UserBaseDTO userBaseDTO = Optional.of(userBaseDTOMap.get(userBase.getId())).orElse(UserBaseDTO.builder().build());
             if (StrUtil.isNotBlank(userBaseDTO.getLastName()) || StrUtil.isNotBlank(userBaseDTO.getFirstName())) {
-                userBase.setUserName(userBaseDTO.getLastName() + userBaseDTO.getFirstName());
+                userBase.setUserName((StrUtil.isNotBlank(userBaseDTO.getLastName()) ? userBaseDTO.getLastName() : userBase.getLastName()) + (StrUtil.isNotBlank(userBaseDTO.getFirstName()) ? userBaseDTO.getFirstName() : userBase.getFirstName()));
             }
             if (StrUtil.isNotBlank(userBaseDTO.getFirstName())) {
                 userBase.setFirstName(userBaseDTO.getFirstName());
@@ -272,7 +272,7 @@ public class UserService {
             return cb.and(predicates.toArray(new Predicate[0]));
         };
         // 3. 执行查询获取查询结果
-        Page<UserBase> userBasePage = userBaseRepository.findAll(spec, PageRequest.of(userBaseDTO.getPageNum(), userBaseDTO.getPageSize(), Sort.by(Sort.Direction.DESC, "updateTime")));
+        Page<UserBase> userBasePage = userBaseRepository.findAll(spec, PageRequest.of(userBaseDTO.getPageNum() - 1, userBaseDTO.getPageSize(), Sort.by(Sort.Direction.DESC, "updateTime")));
         // 4. 构建查询结果返回
         return PageVO.<List<UserBaseVO>>builder()
                 .data(BeanUtil.copyToList(userBasePage.getContent(), UserBaseVO.class))

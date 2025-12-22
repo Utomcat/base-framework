@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "login_account_info")
-public class LoginAccount implements Serializable {
+public class Account implements Serializable {
 
     @Serial
     private static final long serialVersionUID = -3946869251085240157L;

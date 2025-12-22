@@ -1,4 +1,4 @@
-<mxfile host="drawio-plugin" modified="2025-12-22T05:39:20.592Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36" etag="RQNt0ozuSlxC6HLoTEMD" version="22.1.22" type="embed">
+<mxfile host="drawio-plugin" modified="2025-12-22T17:11:18.212Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36" etag="J-ebq2Mfyfiw8W5unZMq" version="22.1.22" type="embed">
   <diagram id="hl3qAEJfJE8Sw8_ukK57" name="第 1 页">
     <mxGraphModel dx="4443" dy="1700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -132,7 +132,7 @@
             <mxRectangle width="30" height="30" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="154" value="user_status&amp;nbsp; 用户状态" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;overflow=hidden;whiteSpace=wrap;html=1;" parent="152" vertex="1">
+        <mxCell id="154" value="user_status&amp;nbsp; 用户状态, -1: 删除; 0: 无效; 1: 正常(默认);" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;overflow=hidden;whiteSpace=wrap;html=1;" parent="152" vertex="1">
           <mxGeometry x="30" width="449" height="30" as="geometry">
             <mxRectangle width="449" height="30" as="alternateBounds" />
           </mxGeometry>

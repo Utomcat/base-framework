@@ -120,7 +120,7 @@ public class UserApi {
      * @return 查询用户结果
      */
     @GetMapping
-    public R<PageVO<List<UserBaseVO>>> queryUser(@RequestBody UserBaseDTO userBaseDTO) {
+    public R<PageVO<List<UserBaseVO>>> queryUser(UserBaseDTO userBaseDTO) {
         return R.ok(userService.queryUser(userBaseDTO));
     }
 

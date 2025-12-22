@@ -2,10 +2,10 @@ package com.ranyk.authorization.service.permissions;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.ranyk.authorization.repository.permissions.PermissionRepository;
-import com.ranyk.authorization.repository.role.RolePermissionsConnectionRepository;
+import com.ranyk.authorization.service.role.RolePermissionsConnectionService;
 import com.ranyk.model.business.permission.dto.PermissionDTO;
 import com.ranyk.model.business.permission.entity.Permission;
-import com.ranyk.model.business.role.entity.RolePermissionConnection;
+import com.ranyk.model.business.role.dto.RolePermissionConnectionDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,18 +33,18 @@ public class PermissionService {
     /**
      * 角色权限关联信息数据库操作类对象
      */
-    private final RolePermissionsConnectionRepository rolePermissionsConnectionRepository;
+    private final RolePermissionsConnectionService rolePermissionsConnectionService;
 
     /**
      * 构造函数
      *
-     * @param permissionRepository                权限信息数据库操作类对象
-     * @param rolePermissionsConnectionRepository 角色权限关联信息数据库操作类对象
+     * @param permissionRepository             权限信息数据库操作类对象
+     * @param rolePermissionsConnectionService 角色权限关联信息业务逻辑类对象
      */
     @Autowired
-    public PermissionService(PermissionRepository permissionRepository, RolePermissionsConnectionRepository rolePermissionsConnectionRepository) {
+    public PermissionService(PermissionRepository permissionRepository, RolePermissionsConnectionService rolePermissionsConnectionService) {
         this.permissionRepository = permissionRepository;
-        this.rolePermissionsConnectionRepository = rolePermissionsConnectionRepository;
+        this.rolePermissionsConnectionService = rolePermissionsConnectionService;
     }
 
     /**
@@ -65,16 +65,16 @@ public class PermissionService {
             return Collections.emptyList();
         }
         // 3. 通过传入的 roleIds 获取对应的角色权限关联信息 List 集合
-        List<RolePermissionConnection> rolePermissionConnectionList = Optional.of(rolePermissionsConnectionRepository.findAllByRoleIdIn(roleIds)).orElse(Collections.emptyList());
+        List<RolePermissionConnectionDTO> rolePermissionConnectionDTOList = rolePermissionsConnectionService.queryRolePermissionConnectionByRoleId(roleIds);
         // 4. 判断角色权限关联信息 List 集合是否没有元素
-        if (rolePermissionConnectionList.isEmpty()) {
+        if (rolePermissionConnectionDTOList.isEmpty()) {
             log.error("未查询到该账户下的权限信息, 直接返回空权限列表!");
             return Collections.emptyList();
         }
         // 5. 通过角色权限关联信息 List 集合获取对应的权限 ID List 集合
-        List<Long> permissionIds = rolePermissionConnectionList.stream().map(RolePermissionConnection::getPermissionId).toList();
+        List<Long> permissionIds = rolePermissionConnectionDTOList.stream().map(RolePermissionConnectionDTO::getPermissionId).toList();
         // 6. 判断权限 ID List 集合是否没有元素
-        if (permissionIds.isEmpty()){
+        if (permissionIds.isEmpty()) {
             log.error("未查询到该账户下的权限信息, 直接返回空权限列表!");
             return Collections.emptyList();
         }

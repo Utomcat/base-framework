@@ -44,6 +44,22 @@ public enum AccountPermissionEnum {
      * 查询用户权限 枚举对象
      */
     QUERY_USER_INFO("query:user:info", "查询用户权限"),
+    /**
+     * 新增用户角色权限 枚举对象
+     */
+    ADD_ROLE_INFO("add:role:info", "新增用户角色权限"),
+    /**
+     * 删除用户角色权限 枚举对象
+     */
+    DELETE_ROLE_INFO("delete:role:info", "删除用户角色权限"),
+    /**
+     * 修改用户角色权限 枚举对象
+     */
+    UPDATE_ROLE_INFO("update:role:info", "修改用户角色权限"),
+    /**
+     * 查询用户角色权限 枚举对象
+     */
+    QUERY_ROLE_INFO("query:role:info", "查询用户角色权限"),
     ;
 
     /**

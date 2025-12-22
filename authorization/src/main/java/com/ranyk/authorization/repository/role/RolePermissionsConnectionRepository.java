@@ -2,6 +2,7 @@ package com.ranyk.authorization.repository.role;
 
 import com.ranyk.model.business.role.entity.RolePermissionConnection;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -16,7 +17,7 @@ import java.util.List;
  * @date: 2025-12-18
  */
 @Repository
-public interface RolePermissionsConnectionRepository extends JpaRepository<RolePermissionConnection, Long>, CrudRepository<RolePermissionConnection, Long> {
+public interface RolePermissionsConnectionRepository extends JpaRepository<RolePermissionConnection, Long>, CrudRepository<RolePermissionConnection, Long>, JpaSpecificationExecutor<RolePermissionConnection> {
 
     /**
      * 通过角色 ID 列表, 获取对应的角色权限关联信息
