@@ -5,6 +5,7 @@ import lombok.*;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * CLASS_NAME: UserBaseDTO.java
@@ -43,7 +44,7 @@ public class UserBaseDTO implements Serializable {
     /**
      * 用户性别 0: 未知(默认); 1: 男; 2: 女;
      */
-    private byte sex;
+    private Integer sex;
     /**
      * 用户昵称
      */
@@ -61,6 +62,10 @@ public class UserBaseDTO implements Serializable {
      */
     private String email;
     /**
+     * 用户状态: -1: 删除; 0: 无效; 1: 正常(默认);
+     */
+    private Integer status;
+    /**
      * 数据创建时间
      */
     private LocalDateTime createTime;
@@ -77,4 +82,18 @@ public class UserBaseDTO implements Serializable {
      */
     private Long updateId;
 
+    // 以下是附加属性,非数据库字段
+
+    /**
+     * 查询的当前页码, 默认 0 (当前页码 - 1)
+     */
+    private Integer pageNum = 0;
+    /**
+     * 查询的每页数量, 默认 10
+     */
+    private Integer pageSize = 10;
+    /**
+     * 数据 ID List 集合(主要用于批量操作)
+     */
+    private List<Long> ids;
 }

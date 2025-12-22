@@ -64,7 +64,7 @@ public class LoginAccountService {
      *
      * @param loginAccountDTO 新增系统登录账户信息封装对象, {@link LoginAccountDTO}
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void addLoginAccount(LoginAccountDTO loginAccountDTO) {
         // 1. 判断当前登录账户是否存在新增系统账户权限
         if (!StpUtil.hasPermission(AccountPermissionEnum.ADD_ACCOUNT.getCode())) {
@@ -102,7 +102,7 @@ public class LoginAccountService {
      *
      * @param loginAccountDTOList 注销系统登录账户信息封装对象 List 集合, 单个参见 {@link LoginAccountDTO}
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void revokedLoginAccount(List<LoginAccountDTO> loginAccountDTOList) {
         // 1. 判断当前登录账户是否存在注销系统账户权限
         if (!StpUtil.hasPermission(AccountPermissionEnum.DELETE_ACCOUNT.getCode())) {
@@ -130,7 +130,7 @@ public class LoginAccountService {
      *
      * @param loginAccountDTOList 修改系统登录账户信息封装对象 List 集合, 单个参见 {@link LoginAccountDTO}
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void updateLoginAccount(List<LoginAccountDTO> loginAccountDTOList) {
         // 1. 判断当前登录账户是否存在修改系统账户权限
         if (!StpUtil.hasPermission(AccountPermissionEnum.UPDATE_ACCOUNT.getCode())) {

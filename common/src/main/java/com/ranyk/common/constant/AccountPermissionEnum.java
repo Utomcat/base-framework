@@ -27,7 +27,24 @@ public enum AccountPermissionEnum {
     /**
      * 查询账户权限 枚举对象
      */
-    QUERY_ACCOUNT("query:login:account", "查询账户权限");
+    QUERY_ACCOUNT("query:login:account", "查询账户权限"),
+    /**
+     * 新增用户权限 枚举对象
+     */
+    ADD_USER_INFO("add:user:info", "新增用户权限"),
+    /**
+     * 删除用户权限 枚举对象
+     */
+    DELETE_USER_INFO("delete:user:info", "删除用户权限"),
+    /**
+     * 修改用户权限 枚举对象
+     */
+    UPDATE_USER_INFO("update:user:info", "修改用户权限"),
+    /**
+     * 查询用户权限 枚举对象
+     */
+    QUERY_USER_INFO("query:user:info", "查询用户权限"),
+    ;
 
     /**
      * 账户权限编码

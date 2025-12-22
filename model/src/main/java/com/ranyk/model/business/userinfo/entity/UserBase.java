@@ -53,7 +53,7 @@ public class UserBase implements Serializable {
      * 用户性别 0: 未知(默认); 1: 男; 2: 女;
      */
     @Column(name = "user_sex", nullable = false, columnDefinition = "TINYINT DEFAULT 0 COMMENT '用户性别 0: 未知(默认); 1: 男; 2: 女;'")
-    private byte sex;
+    private Integer sex;
     /**
      * 用户昵称
      */
@@ -74,6 +74,11 @@ public class UserBase implements Serializable {
      */
     @Column(name = "user_email", nullable = false, columnDefinition = "varchar(500) COMMENT '用户邮箱'")
     private String email;
+    /**
+     * 用户状态: -1: 删除; 0: 无效; 1: 正常(默认);
+     */
+    @Column(name = "user_status", nullable = false, columnDefinition = "TINYINT DEFAULT 1 COMMENT '用户状态: -1: 删除; 0: 无效; 1: 正常(默认);'")
+    private Integer status;
     /**
      * 数据创建时间
      */

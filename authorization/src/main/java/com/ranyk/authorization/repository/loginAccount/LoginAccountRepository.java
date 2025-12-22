@@ -17,20 +17,21 @@ import java.util.Optional;
  *
  * @author ranyk
  * @version V1.0
- * @description: 登录业务数据库操作类
+ * @description: 账户信息数据库操作类
  * @date: 2025-10-10
  */
 @Repository
 public interface LoginAccountRepository extends JpaRepository<LoginAccount, Long>, CrudRepository<LoginAccount, Long>, JpaSpecificationExecutor<LoginAccount> {
 
     /**
-     * 通过用户名和密码查询用户信息
+     * 通过账户名和密码查询有效的账户信息
      *
-     * @param userName 用户名
-     * @param password 密码
+     * @param userName      用户名
+     * @param password      密码
+     * @param accountStatus 账户状态
      * @return 用户信息
      */
-    Optional<LoginAccount> findByUserNameAndPassword(String userName, String password);
+    Optional<LoginAccount> findByUserNameAndPasswordAndAccountStatusEquals(String userName, String password, Integer accountStatus);
 
     /**
      * 查询是否存在一条指定账户名的数据

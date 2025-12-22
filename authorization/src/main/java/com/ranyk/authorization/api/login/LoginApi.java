@@ -14,7 +14,25 @@ import org.springframework.web.bind.annotation.RestController;
  *
  * @author ranyk
  * @version V1.0
- * @description: 用户登录接口 API 类
+ * @description: 账户登录接口 API 类, 接口功能如下:
+ * <p>
+ *     <ol>
+ *      <li>账户登录,登录条件:
+ *       <ol>
+ *           <li>录入的账户名不能为空</li>
+ *           <li>录入的密码不能为空</li>
+ *           <li>登录账户状态为有效</li>
+ *           <li>登录账户名存在</li>
+ *       </ol>
+ *      </li>
+ *      <li>账户登录成功后返回结果
+ *       <ol>
+ *           <li>登录账户的 SA-TOKEN 认证令牌 token 名称</li>
+ *           <li>登录账户的 SA-TOKEN 认证令牌 token 值</li>
+ *       </ol>
+ *      </li>
+ *     </ol>
+ * </p>
  * @date: 2025-10-10
  */
 @RestController

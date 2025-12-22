@@ -23,6 +23,10 @@ public class UserBaseVO implements Serializable {
     @Serial
     private static final long serialVersionUID = -2007006961223846209L;
     /**
+     * 用户 ID
+     */
+    private Long id;
+    /**
      * 用户全名
      */
     private String userName;
@@ -37,7 +41,7 @@ public class UserBaseVO implements Serializable {
     /**
      * 用户性别 0: 未知(默认); 1: 男; 2: 女;
      */
-    private byte sex;
+    private Integer sex;
     /**
      * 用户昵称
      */
@@ -54,4 +58,8 @@ public class UserBaseVO implements Serializable {
      * 用户邮箱
      */
     private String email;
+    /**
+     * 用户状态: -1: 删除; 0: 无效; 1: 正常(默认);
+     */
+    private Integer status;
 }

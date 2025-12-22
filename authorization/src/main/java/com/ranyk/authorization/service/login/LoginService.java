@@ -4,6 +4,7 @@ import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.crypto.digest.DigestUtil;
 import com.ranyk.authorization.repository.loginAccount.LoginAccountRepository;
+import com.ranyk.common.constant.AccountStatusEnum;
 import com.ranyk.model.business.login.dto.LoginAccountDTO;
 import com.ranyk.model.business.login.entity.LoginAccount;
 import com.ranyk.model.exception.user.UserException;
@@ -47,7 +48,7 @@ public class LoginService {
      */
     public LoginAccountDTO login(LoginAccountDTO loginDTO) {
         // 通过传入的用户名和密码进行用户对象的查询, 当未查询到时, 返回一个新建的 Login 对象, 此对象没有数据 id
-        LoginAccount login = loginAccountRepository.findByUserNameAndPassword(loginDTO.getUserName(), DigestUtil.md5Hex(loginDTO.getPassword())).orElse(LoginAccount.builder().build());
+        LoginAccount login = loginAccountRepository.findByUserNameAndPasswordAndAccountStatusEquals(loginDTO.getUserName(), DigestUtil.md5Hex(loginDTO.getPassword()), AccountStatusEnum.ENABLED.getCode()).orElse(LoginAccount.builder().build());
         // 判断是否存在用户 id
         if (Objects.isNull(login.getId())){
             // 不存在用户 id 则抛出用户登录异常
