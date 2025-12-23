@@ -9,6 +9,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -58,6 +59,6 @@ public interface AccountRepository extends JpaRepository<Account, Long>, CrudRep
      * @return 返回注销的账户数量
      */
     @Modifying
-    @Query("UPDATE Account la SET la.accountStatus = :newStatus WHERE la.id IN :ids AND la.accountStatus != -2")
-    int batchDeregistrationAccountStatusByIds(@Param("ids") List<Long> ids, @Param("newStatus") Integer newStatus);
+    @Query("UPDATE Account a SET a.accountStatus = :newStatus, a.updateId = :updateId, a.updateTime = :updateTime WHERE a.id IN :ids AND a.accountStatus != -2")
+    int batchDeregistrationAccountStatusByIds(@Param("ids") List<Long> ids, @Param("newStatus") Integer newStatus, @Param("updateId") Long updateId, @Param("updateTime")LocalDateTime updateTime);
 }

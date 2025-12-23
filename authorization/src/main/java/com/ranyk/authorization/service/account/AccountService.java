@@ -121,7 +121,7 @@ public class AccountService {
             throw new ServiceException("no.data.need.delete");
         }
         // 6. 执行批量注销账户
-        int result = accountRepository.batchDeregistrationAccountStatusByIds(ids, AccountStatusEnum.DELETED.getCode());
+        int result = accountRepository.batchDeregistrationAccountStatusByIds(ids, AccountStatusEnum.DELETED.getCode(), StpUtil.getLoginIdAsLong(), LocalDateTime.now());
         log.info("本次注销账户数量: {} 个", result);
     }
 
