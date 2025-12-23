@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Set;
+
 /**
  * CLASS_NAME: AccountUserConnectionRepository.java
  *
@@ -16,4 +18,13 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface AccountUserConnectionRepository extends JpaRepository<AccountUserConnection, Long>, CrudRepository<AccountUserConnection, Long>, JpaSpecificationExecutor<AccountUserConnection> {
+
+    /**
+     * 依据传入的账户 ID 或 用户 ID 查询是否已经存在数据
+     *
+     * @param accountIdList 需要查询的账户 ID 列表
+     * @param userIdList    需要查询的用户 ID 列表
+     * @return 存在数据返回 {@link Boolean#TRUE}; 否则返回 {@link Boolean#FALSE};
+     */
+    Boolean existsByAccountIdInOrUserIdIn(Set<Long> accountIdList, Set<Long> userIdList);
 }
