@@ -139,7 +139,7 @@ public class UserService {
             throw new ServiceException("no.data.need.delete");
         }
         // 3. 批量删除用户数据
-        int i = userBaseRepository.batchUpdateUserStatusByIds(userBaseDTO.getIds(), UserStatusEnum.DELETE.getCode());
+        int i = userBaseRepository.batchUpdateUserStatusByIds(userBaseDTO.getIds(), UserStatusEnum.DELETE.getCode(), StpUtil.getLoginIdAsLong(), LocalDateTime.now());
         // 4. 输出删除成功日志
         log.info("删除用户成功,删除用户数据为 {} 条", i);
     }

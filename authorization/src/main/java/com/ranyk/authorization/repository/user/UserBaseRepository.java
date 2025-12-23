@@ -9,6 +9,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -30,6 +31,6 @@ public interface UserBaseRepository extends JpaRepository<UserBase, Long>, CrudR
      * @return 返回更新的用户数量
      */
     @Modifying
-    @Query("UPDATE UserBase u SET u.status = :status WHERE u.id IN :ids and u.status != -1")
-    int batchUpdateUserStatusByIds(@Param("ids") List<Long> ids, @Param("status") Integer status);
+    @Query("UPDATE UserBase u SET u.status = :status, u.updateId = :updateId, u.updateTime = :updateTime WHERE u.id IN :ids and u.status != -1")
+    int batchUpdateUserStatusByIds(@Param("ids") List<Long> ids, @Param("status") Integer status, @Param("updateId") Long updateId, @Param("updateTime") LocalDateTime updateTime);
 }
