@@ -60,6 +60,34 @@ public enum AccountPermissionEnum {
      * 查询用户角色权限 枚举对象
      */
     QUERY_ROLE_INFO("query:role:info", "查询用户角色权限"),
+    /**
+     * 新增账户用户关联关系权限 枚举对象
+     */
+    ADD_ACCOUNT_USER_CONNECTION("add:account:user:connection", "新增账户用户关联关系权限"),
+    /**
+     * 新增权限信息权限 枚举对象
+     */
+    ADD_PERMISSIONS_INFO("add:permissions:info", "新增权限信息权限"),
+    /**
+     * 删除权限信息权限 枚举对象
+     */
+    DELETE_PERMISSIONS_INFO("delete:permissions:info", "删除权限信息权限"),
+    /**
+     * 修改权限信息权限 枚举对象
+     */
+    UPDATE_PERMISSIONS_INFO("update:permissions:info", "修改权限信息权限"),
+    /**
+     * 查询权限信息权限 枚举对象
+     */
+    QUERY_PERMISSIONS_INFO("query:permissions:info", "查询权限信息权限"),
+    /**
+     * 新增账户角色关联关系权限 枚举对象
+     */
+    ADD_ACCOUNT_ROLE_CONNECTION("add:account:role:connection", "新增账户角色关联关系权限"),
+    /**
+     * 删除账户角色关联关系权限 枚举对象
+     */
+    DELETE_ACCOUNT_ROLE_CONNECTION("delete:account:role:connection", "删除账户角色关联关系权限"),
     ;
 
     /**
