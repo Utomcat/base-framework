@@ -19,7 +19,7 @@ import java.io.Serializable;
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-public class PermissionVO implements Serializable {
+public class PermissionsVO implements Serializable {
     @Serial
     private static final long serialVersionUID = 9094887326472742619L;
     /**
@@ -37,5 +37,5 @@ public class PermissionVO implements Serializable {
     /**
      * 权限状态: 1: 正常(默认); -1: 删除/停用;
      */
-    private byte permissionStatus;
+    private Integer permissionStatus;
 }
