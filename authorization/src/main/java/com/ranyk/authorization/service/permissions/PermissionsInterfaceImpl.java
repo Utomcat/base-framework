@@ -2,7 +2,7 @@ package com.ranyk.authorization.service.permissions;
 
 import cn.dev33.satoken.stp.StpInterface;
 import com.ranyk.authorization.service.role.RoleService;
-import com.ranyk.model.business.permission.dto.PermissionDTO;
+import com.ranyk.model.business.permission.dto.PermissionsDTO;
 import com.ranyk.model.business.role.dto.RoleDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,18 +28,18 @@ public class PermissionsInterfaceImpl implements StpInterface {
     /**
      * 权限信息业务逻辑类对象
      */
-    private final PermissionService permissionService;
+    private final PermissionsService permissionsService;
 
     /**
      * 构造函数
      *
      * @param roleService       角色信息业务逻辑类对象
-     * @param permissionService 权限信息业务逻辑类对象
+     * @param permissionsService 权限信息业务逻辑类对象
      */
     @Autowired
-    public PermissionsInterfaceImpl(RoleService roleService, PermissionService permissionService) {
+    public PermissionsInterfaceImpl(RoleService roleService, PermissionsService permissionsService) {
         this.roleService = roleService;
-        this.permissionService = permissionService;
+        this.permissionsService = permissionsService;
     }
 
     /**
@@ -58,17 +58,17 @@ public class PermissionsInterfaceImpl implements StpInterface {
         // 3.  从 roleDTOList 中获取 roleId List 集合
         List<Long> roleIds = roleDTOList.stream().map(RoleDTO::getId).toList();
         // 4. 通过角色ID List 集合获取对应账户下的权限信息 List 集合
-        List<PermissionDTO> permissionCodes = permissionService.getPermissionListByRoleIds(roleIds);
+        List<PermissionsDTO> permissionCodes = permissionsService.getPermissionListByRoleIds(roleIds);
         // 5. 去掉 permissionCodes 中 permissionCode 重复的对象, 去重逻辑：保留第一个出现的相同permissionCode对象
         return permissionCodes.stream()
                 .collect(Collectors.toMap(
-                        PermissionDTO::getPermissionCode,
+                        PermissionsDTO::getPermissionCode,
                         Function.identity(),
                         (existing, replacement) -> existing
                 ))
                 .values()
                 .stream()
-                .map(PermissionDTO::getPermissionCode)
+                .map(PermissionsDTO::getPermissionCode)
                 .toList();
     }
 
