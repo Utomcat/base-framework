@@ -1,10 +1,11 @@
 package com.ranyk.model.business.role.dto;
 
+import com.ranyk.model.base.dto.BaseDTO;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 /**
  * CLASS_NAME: RoleDTO.java
@@ -15,12 +16,12 @@ import java.time.LocalDateTime;
  * @date: 2025-11-15
  */
 @Data
-@Builder
 @ToString
-@EqualsAndHashCode
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RoleDTO implements Serializable {
+@EqualsAndHashCode(callSuper = true)
+public class RoleDTO extends BaseDTO implements Serializable {
 
     @Serial
     private static final long serialVersionUID = -4312481857172481744L;
@@ -39,22 +40,5 @@ public class RoleDTO implements Serializable {
     /**
      * 角色状态: 1: 正常(默认); -1: 删除/停用;
      */
-    private byte roleStatus;
-    /**
-     * 角色数据创建时间
-     */
-    private LocalDateTime createTime;
-    /**
-     * 角色数据创建人 ID
-     */
-    private Long createId;
-    /**
-     * 角色数据更新时间
-     */
-    private LocalDateTime updateTime;
-    /**
-     * 角色数据更新人 ID
-     */
-    private Long updateId;
-
+    private Integer roleStatus;
 }

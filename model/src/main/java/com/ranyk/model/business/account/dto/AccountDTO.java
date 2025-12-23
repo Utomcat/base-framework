@@ -1,10 +1,11 @@
 package com.ranyk.model.business.account.dto;
 
+import com.ranyk.model.base.dto.BaseDTO;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 /**
  * CLASS_NAME: AccountDTO.java
@@ -15,12 +16,12 @@ import java.time.LocalDateTime;
  * @date: 2025-10-10
  */
 @Data
-@Builder
 @ToString
-@EqualsAndHashCode
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AccountDTO implements Serializable {
+@EqualsAndHashCode(callSuper = true)
+public class AccountDTO extends BaseDTO implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 6394345823746679769L;
@@ -48,28 +49,4 @@ public class AccountDTO implements Serializable {
      * 登录成功后的 SA-TOKEN 认证令牌 token 值
      */
     public String tokenValue;
-    /**
-     * 账户数据创建时间
-     */
-    private LocalDateTime createTime;
-    /**
-     * 账户数据创建人 ID
-     */
-    private Long createId;
-    /**
-     * 账户数据更新时间
-     */
-    private LocalDateTime updateTime;
-    /**
-     * 账户数据更新人 ID
-     */
-    private Long updateId;
-    /**
-     * 查询的当前页码, 默认 0 (当前页码 - 1)
-     */
-    private Integer pageNum = 0;
-    /**
-     * 查询的每页数量, 默认 10
-     */
-    private Integer pageSize = 10;
 }

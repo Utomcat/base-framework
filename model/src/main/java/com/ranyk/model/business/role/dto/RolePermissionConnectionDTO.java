@@ -1,10 +1,11 @@
 package com.ranyk.model.business.role.dto;
 
+import com.ranyk.model.base.dto.BaseDTO;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 /**
  * CLASS_NAME: RolePermissionConnection.java
@@ -15,12 +16,12 @@ import java.time.LocalDateTime;
  * @date: 2025-12-23
  */
 @Data
-@Builder
 @ToString
-@EqualsAndHashCode
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RolePermissionConnectionDTO implements Serializable {
+@EqualsAndHashCode(callSuper = true)
+public class RolePermissionConnectionDTO extends BaseDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = -4433425073735553667L;
 
@@ -36,20 +37,4 @@ public class RolePermissionConnectionDTO implements Serializable {
      * 权限信息数据 ID
      */
     private Long permissionId;
-    /**
-     * 数据创建时间
-     */
-    private LocalDateTime createTime;
-    /**
-     * 数据创建人 ID
-     */
-    private Long createId;
-    /**
-     * 数据更新时间
-     */
-    private LocalDateTime updateTime;
-    /**
-     * 数据更新人 ID
-     */
-    private Long updateId;
 }

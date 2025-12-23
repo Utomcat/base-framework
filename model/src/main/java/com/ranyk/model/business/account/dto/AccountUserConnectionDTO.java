@@ -1,10 +1,11 @@
 package com.ranyk.model.business.account.dto;
 
+import com.ranyk.model.base.dto.BaseDTO;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 /**
  * CLASS_NAME: AccountUserConnectionDTO.java
@@ -15,12 +16,12 @@ import java.time.LocalDateTime;
  * @date: 2025-12-18
  */
 @Data
-@Builder
 @ToString
-@EqualsAndHashCode
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AccountUserConnectionDTO implements Serializable {
+@EqualsAndHashCode(callSuper = true)
+public class AccountUserConnectionDTO extends BaseDTO implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1897891007458613620L;
@@ -36,21 +37,5 @@ public class AccountUserConnectionDTO implements Serializable {
      * 用户信息数据 ID
      */
     private Long userId;
-    /**
-     * 数据创建时间
-     */
-    private LocalDateTime createTime;
-    /**
-     * 数据创建人 ID
-     */
-    private Long createId;
-    /**
-     * 数据更新时间
-     */
-    private LocalDateTime updateTime;
-    /**
-     * 数据更新人 ID
-     */
-    private Long updateId;
     
 }

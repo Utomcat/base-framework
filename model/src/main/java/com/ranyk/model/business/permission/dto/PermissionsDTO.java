@@ -1,10 +1,11 @@
 package com.ranyk.model.business.permission.dto;
 
+import com.ranyk.model.base.dto.BaseDTO;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 /**
  * CLASS_NAME: PermissionDTO.java
@@ -15,12 +16,12 @@ import java.time.LocalDateTime;
  * @date: 2025-11-15
  */
 @Data
-@Builder
 @ToString
-@EqualsAndHashCode
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PermissionDTO implements Serializable {
+@EqualsAndHashCode(callSuper = true)
+public class PermissionsDTO extends BaseDTO implements Serializable {
 
     @Serial
     private static final long serialVersionUID = -5291004214727358969L;
@@ -39,22 +40,6 @@ public class PermissionDTO implements Serializable {
     /**
      * 权限状态: 1: 正常(默认); -1: 删除/停用;
      */
-    private byte permissionStatus;
-    /**
-     * 权限数据创建时间
-     */
-    private LocalDateTime createTime;
-    /**
-     * 权限数据创建人 ID
-     */
-    private Long createId;
-    /**
-     * 权限数据更新时间
-     */
-    private LocalDateTime updateTime;
-    /**
-     * 权限数据更新人 ID
-     */
-    private Long updateId;
+    private Integer permissionStatus;
 
 }
