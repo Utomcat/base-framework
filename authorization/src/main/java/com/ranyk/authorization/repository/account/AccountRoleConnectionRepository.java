@@ -26,4 +26,13 @@ public interface AccountRoleConnectionRepository extends JpaRepository<AccountRo
      * @return 返回该账户下 账户角色关联信息 List 集合,单个实体参见 {@link AccountRoleConnection} 对象
      */
     List<AccountRoleConnection> findAllByAccountIdEquals(Long accountId);
+
+    /**
+     * 通过账户 ID 集合和角色 ID 集合查询指定账户是否已经拥有指定的角色信息
+     *
+     * @param accountIds 需要查询的账户 ID List 集合
+     * @param roleIds    需要查询的角色 ID List 集合
+     * @return 返回查询结果, true 表示已经拥有; false 表示没有;
+     */
+    Boolean existsByAccountIdInAndRoleIdIn(List<Long> accountIds, List<Long> roleIds);
 }
