@@ -2,6 +2,8 @@ package com.ranyk.authorization.api.account;
 
 import com.ranyk.authorization.service.account.AccountService;
 import com.ranyk.model.business.account.dto.AccountDTO;
+import com.ranyk.model.business.account.dto.AccountRoleConnectionDTO;
+import com.ranyk.model.business.account.dto.AccountUserConnectionDTO;
 import com.ranyk.model.business.account.vo.AccountVO;
 import com.ranyk.model.page.vo.PageVO;
 import com.ranyk.model.response.R;
@@ -72,7 +74,7 @@ import java.util.List;
  * @date: 2025-12-18
  */
 @RestController
-@RequestMapping("/account")
+@RequestMapping("/account/")
 public class AccountApi {
 
     /**
@@ -137,5 +139,27 @@ public class AccountApi {
         return R.ok(accountService.queryLoginAccount(accountDTOList));
     }
 
+    /**
+     * 新增账户和用户信息关联关系
+     *
+     * @param accountUserConnectionDTOList 账户用户关联关系数据接受对象 List 集合, 单个账户用户关联关系信息为 {@link AccountUserConnectionDTO}
+     * @return 新增账户和用户信息关联关系结果
+     */
+    @PostMapping("user/connection")
+    public R<String> addAccountUserConnection(@RequestBody List<AccountUserConnectionDTO> accountUserConnectionDTOList) {
+        accountService.addAccountUserConnection(accountUserConnectionDTOList);
+        return R.ok("新增账户和用户信息关联关系成功!");
+    }
 
+    /**
+     * 为账户分配角色
+     *
+     * @param accountRoleConnectionDTOList 账户角色信息接受对象 List 集合, 单个账户角色信息为 {@link AccountRoleConnectionDTO}
+     * @return 为账户分配角色结果
+     */
+    @PostMapping("role/connection")
+    public R<String> allocationAccountRoleConnection(@RequestBody List<AccountRoleConnectionDTO> accountRoleConnectionDTOList) {
+        accountService.allocationAccountRoleConnection(accountRoleConnectionDTOList);
+        return R.ok("为账户分配角色成功!");
+    }
 }

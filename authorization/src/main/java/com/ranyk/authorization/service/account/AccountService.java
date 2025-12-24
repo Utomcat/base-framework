@@ -2,6 +2,7 @@ package com.ranyk.authorization.service.account;
 
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.digest.DigestUtil;
 import com.ranyk.authorization.repository.account.AccountRepository;
@@ -9,6 +10,8 @@ import com.ranyk.common.constant.AccountEnum;
 import com.ranyk.common.constant.AccountPermissionEnum;
 import com.ranyk.common.constant.AccountStatusEnum;
 import com.ranyk.model.business.account.dto.AccountDTO;
+import com.ranyk.model.business.account.dto.AccountRoleConnectionDTO;
+import com.ranyk.model.business.account.dto.AccountUserConnectionDTO;
 import com.ranyk.model.business.account.entity.Account;
 import com.ranyk.model.business.account.vo.AccountVO;
 import com.ranyk.model.exception.service.ServiceException;
@@ -45,6 +48,14 @@ import java.util.Objects;
 public class AccountService {
 
     /**
+     * 账户角色关联关系业务逻辑类对象
+     */
+    private final AccountRoleConnectionService accountRoleConnectionService;
+    /**
+     * 账户用户关联关系业务逻辑类对象
+     */
+    private final AccountUserConnectionService accountUserConnectionService;
+    /**
      * 登录账户信息数据库操作类
      */
     private final AccountRepository accountRepository;
@@ -52,10 +63,16 @@ public class AccountService {
     /**
      * 构造方法
      *
-     * @param accountRepository 登录账户信息数据库操作类
+     * @param accountRoleConnectionService 账户角色关联关系业务逻辑类对象
+     * @param accountUserConnectionService 账户用户关联关系业务逻辑类对象
+     * @param accountRepository            登录账户信息数据库操作类
      */
     @Autowired
-    public AccountService(AccountRepository accountRepository) {
+    public AccountService(AccountRoleConnectionService accountRoleConnectionService,
+                          AccountUserConnectionService accountUserConnectionService,
+                          AccountRepository accountRepository) {
+        this.accountRoleConnectionService = accountRoleConnectionService;
+        this.accountUserConnectionService = accountUserConnectionService;
         this.accountRepository = accountRepository;
     }
 
@@ -227,5 +244,42 @@ public class AccountService {
         Account account = accountRepository.findByUserNameAndPasswordAndAccountStatusEquals(accountDTO.getUserName(), DigestUtil.md5Hex(accountDTO.getPassword()), AccountStatusEnum.ENABLED.getCode()).orElse(Account.builder().build());
         // 返回查询结果
         return BeanUtil.copyProperties(account, AccountDTO.class);
+    }
+
+    /**
+     * 新增账户和用户信息关联关系
+     *
+     * @param accountUserConnectionDTOList 账户用户关联关系数据接受对象 List 集合, 单个账户用户关联关系信息为 {@link AccountUserConnectionDTO}
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void addAccountUserConnection(List<AccountUserConnectionDTO> accountUserConnectionDTOList) {
+        accountUserConnectionService.addAccountUserConnection(accountUserConnectionDTOList);
+    }
+
+    /**
+     * 为账户分配角色信息
+     *
+     * @param accountRoleConnectionDTOList 账户角色信息接受对象 List 集合, 单个账户角色信息为 {@link AccountRoleConnectionDTO}
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void allocationAccountRoleConnection(List<AccountRoleConnectionDTO> accountRoleConnectionDTOList) {
+        // 1. 判断当前用户是否拥有账户角色添加和删除权限
+        if (!StpUtil.hasPermission(AccountPermissionEnum.ADD_ACCOUNT_ROLE_CONNECTION.getCode())) {
+            log.error("当前用户没有账户角色添加权限!");
+            throw new UserException("no.create.permission");
+        }
+        if (!StpUtil.hasPermission(AccountPermissionEnum.DELETE_ACCOUNT_ROLE_CONNECTION.getCode())) {
+            log.error("当前用户没有账户角色删除权限!");
+            throw new UserException("no.delete.permission");
+        }
+        // 2. 判断是否拥有操作数据
+        if (CollUtil.isEmpty(accountRoleConnectionDTOList) || accountRoleConnectionDTOList.isEmpty()) {
+            log.error("没有需要给账户分配的角色数据!");
+            throw new ServiceException("no.data.need.create");
+        }
+        // 3. 根据账户 ID 删除当前与该账户关联的角色关联信息
+        accountRoleConnectionService.removeAccountRoleConnectionByAccountId(AccountRoleConnectionDTO.builder().accountIds(accountRoleConnectionDTOList.stream().map(AccountRoleConnectionDTO::getAccountId).distinct().toList()).build());
+        // 4. 新增账户角色关联关系
+        accountRoleConnectionService.addAccountRoleConnection(accountRoleConnectionDTOList);
     }
 }
