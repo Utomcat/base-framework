@@ -6,6 +6,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * CLASS_NAME: RolePermissionConnection.java
@@ -37,4 +38,14 @@ public class RolePermissionConnectionDTO extends BaseDTO implements Serializable
      * 权限信息数据 ID
      */
     private Long permissionId;
+
+    // 以下为额外属性
+    /**
+     * 角色 ID List 集合
+     */
+    private List<Long> roleIds;
+    /**
+     * 权限 ID List 集合
+     */
+    private List<Long> permissionIds;
 }
