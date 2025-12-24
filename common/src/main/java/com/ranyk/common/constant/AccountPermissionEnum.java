@@ -88,6 +88,14 @@ public enum AccountPermissionEnum {
      * 删除账户角色关联关系权限 枚举对象
      */
     DELETE_ACCOUNT_ROLE_CONNECTION("delete:account:role:connection", "删除账户角色关联关系权限"),
+    /**
+     * 添加角色权限关联关系权限 枚举对象
+     */
+    ADD_ROLE_PERMISSION_CONNECTION("add:role:permission:connection", "添加角色权限关联关系权限"),
+    /**
+     * 删除角色权限关联关系权限 枚举对象
+     */
+    DELETE_ROLE_PERMISSION_CONNECTION("delete:role:permission:connection", "删除角色权限关联关系权限"),
     ;
 
     /**
