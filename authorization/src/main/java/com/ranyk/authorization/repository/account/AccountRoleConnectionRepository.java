@@ -35,4 +35,12 @@ public interface AccountRoleConnectionRepository extends JpaRepository<AccountRo
      * @return 返回查询结果, true 表示已经拥有; false 表示没有;
      */
     Boolean existsByAccountIdInAndRoleIdIn(List<Long> accountIds, List<Long> roleIds);
+
+    /**
+     * 通过账户 ID 集合删除账户角色关联信息
+     *
+     * @param accountIds 需要删除的账户 ID List 集合
+     * @return 返回删除的账户角色关联信息数量
+     */
+    Long deleteByAccountIdIn(List<Long> accountIds);
 }

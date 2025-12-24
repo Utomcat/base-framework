@@ -6,6 +6,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * CLASS_NAME: AccountRoleConnectionDTO.java
@@ -37,5 +38,15 @@ public class AccountRoleConnectionDTO extends BaseDTO implements Serializable {
      * 角色信息数据 ID
      */
     private Long roleId;
+
+    // 以下为额外属性
+    /**
+     * 账户数据 ID List 集合
+     */
+    private List<Long> accountIds;
+    /**
+     * 角色数据 ID List 集合
+     */
+    private List<Long> roleIds;
 
 }
