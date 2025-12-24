@@ -2,6 +2,7 @@ package com.ranyk.authorization.service.role;
 
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.ranyk.authorization.repository.role.RoleRepository;
 import com.ranyk.authorization.service.account.AccountRoleConnectionService;
@@ -10,6 +11,7 @@ import com.ranyk.common.constant.RoleStatusEnum;
 import com.ranyk.model.base.dto.BaseDTO;
 import com.ranyk.model.business.account.dto.AccountRoleConnectionDTO;
 import com.ranyk.model.business.role.dto.RoleDTO;
+import com.ranyk.model.business.role.dto.RolePermissionConnectionDTO;
 import com.ranyk.model.business.role.entity.Role;
 import com.ranyk.model.business.role.vo.RoleVO;
 import com.ranyk.model.exception.service.ServiceException;
@@ -48,6 +50,10 @@ public class RoleService {
      */
     private final AccountRoleConnectionService accountRoleConnectionService;
     /**
+     * 角色权限关联信息业务逻辑类
+     */
+    private final RolePermissionsConnectionService rolePermissionsConnectionService;
+    /**
      * 角色信息数据库操作类
      */
     private final RoleRepository roleRepository;
@@ -55,12 +61,16 @@ public class RoleService {
     /**
      * 构造函数
      *
-     * @param accountRoleConnectionService 账号角色关联信息业务逻辑类
-     * @param roleRepository               角色信息数据库操作类
+     * @param accountRoleConnectionService     账号角色关联信息业务逻辑类
+     * @param rolePermissionsConnectionService 角色权限关联信息业务逻辑类
+     * @param roleRepository                   角色信息数据库操作类
      */
     @Autowired
-    public RoleService(AccountRoleConnectionService accountRoleConnectionService, RoleRepository roleRepository) {
+    public RoleService(AccountRoleConnectionService accountRoleConnectionService,
+                       RolePermissionsConnectionService rolePermissionsConnectionService,
+                       RoleRepository roleRepository) {
         this.accountRoleConnectionService = accountRoleConnectionService;
+        this.rolePermissionsConnectionService = rolePermissionsConnectionService;
         this.roleRepository = roleRepository;
     }
 
@@ -284,5 +294,32 @@ public class RoleService {
                 .totalPage(rolePage.getTotalPages())
                 .total(rolePage.getTotalElements())
                 .build();
+    }
+
+    /**
+     * 授予角色权限
+     *
+     * @param rolePermissionConnectionDTOList 需要给角色的权限信息 List 集合, 单个权限信息为 {@link RolePermissionConnectionDTO} 角色权限关联关系信息对象;
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void empowerPermissions(List<RolePermissionConnectionDTO> rolePermissionConnectionDTOList) {
+        // 1. 判断当前账户是否拥有授予角色权限的权限
+        if (!StpUtil.hasPermission(AccountPermissionEnum.ADD_ROLE_PERMISSION_CONNECTION.getCode())) {
+            log.error("当前账户没有添加角色权限的权限!");
+            throw new ServiceException("no.create.permission");
+        }
+        if (!StpUtil.hasPermission(AccountPermissionEnum.DELETE_ROLE_PERMISSION_CONNECTION.getCode())){
+            log.error("当前账户没有删除角色权限的权限!");
+            throw new ServiceException("no.delete.permission");
+        }
+        // 2. 判断当前的数据是否存在
+        if (CollUtil.isEmpty(rolePermissionConnectionDTOList) || rolePermissionConnectionDTOList.isEmpty()) {
+            log.error("不存在需要给角色赋予的权限数据,不予进行角色赋权业务!");
+            throw new ServiceException("no.data.need.update");
+        }
+        // 3. 删除当前需要授予角色的所有权限
+        rolePermissionsConnectionService.removeRolePermissionConnectionByRoleId(RolePermissionConnectionDTO.builder().roleIds(rolePermissionConnectionDTOList.stream().map(RolePermissionConnectionDTO::getRoleId).distinct().toList()).build());
+        // 4. 添加当前需要授予角色的所有权限
+        rolePermissionsConnectionService.addRolePermissionConnection(rolePermissionConnectionDTOList);
     }
 }

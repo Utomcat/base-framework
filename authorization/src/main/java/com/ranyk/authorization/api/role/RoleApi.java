@@ -3,6 +3,7 @@ package com.ranyk.authorization.api.role;
 import cn.hutool.core.bean.BeanUtil;
 import com.ranyk.authorization.service.role.RoleService;
 import com.ranyk.model.business.role.dto.RoleDTO;
+import com.ranyk.model.business.role.dto.RolePermissionConnectionDTO;
 import com.ranyk.model.business.role.vo.RoleVO;
 import com.ranyk.model.page.vo.PageVO;
 import com.ranyk.model.response.R;
@@ -93,5 +94,17 @@ public class RoleApi {
     @GetMapping
     public R<PageVO<List<RoleVO>>> queryRoleList(RoleDTO roleDTO){
         return R.ok(roleService.queryRoleList(roleDTO));
+    }
+
+    /**
+     * 授予角色权限
+     *
+     * @param rolePermissionConnectionDTOList 授予角色权限参数封装对象 List 集合, 单个角色权限信息为 {@link RolePermissionConnectionDTO} 角色权限信息对象
+     * @return 返回角色授权结果
+     */
+    @PostMapping("/empower/permissions")
+    public R<String> empowerPermissions(@RequestBody List<RolePermissionConnectionDTO> rolePermissionConnectionDTOList){
+        roleService.empowerPermissions(rolePermissionConnectionDTOList);
+        return R.ok("授权权限成功!");
     }
 }
