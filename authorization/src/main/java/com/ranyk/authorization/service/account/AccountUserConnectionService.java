@@ -87,4 +87,18 @@ public class AccountUserConnectionService {
         }
         log.info("账户用户关联关系数据保存成功!!!");
     }
+
+    /**
+     * 根据账户 ID 查询账户和用户信息关联信息
+     *
+     * @param accountUserConnectionDTO 账户用户关联关系数据接受对象, 账户 ID 为 {@link AccountUserConnectionDTO#getAccountId()}
+     * @return 账户用户关联关系数据接受对象, 用户 ID 为 {@link AccountUserConnectionDTO#getUserId()}
+     */
+    public AccountUserConnectionDTO queryUserInfoIdByAccountId(AccountUserConnectionDTO accountUserConnectionDTO){
+        if (Objects.isNull(accountUserConnectionDTO.getAccountId())){
+            return AccountUserConnectionDTO.builder().build();
+        }
+        AccountUserConnection accountUserConnection = accountUserConnectionRepository.findAccountUserConnectionByAccountIdEquals(accountUserConnectionDTO.getAccountId());
+        return BeanUtil.copyProperties(accountUserConnection, AccountUserConnectionDTO.class);
+    }
 }
