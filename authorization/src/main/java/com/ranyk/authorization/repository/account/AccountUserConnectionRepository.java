@@ -27,4 +27,12 @@ public interface AccountUserConnectionRepository extends JpaRepository<AccountUs
      * @return 存在数据返回 {@link Boolean#TRUE}; 否则返回 {@link Boolean#FALSE};
      */
     Boolean existsByAccountIdInOrUserIdIn(Set<Long> accountIdList, Set<Long> userIdList);
+
+     /**
+     * 依据账户 ID 查询账户用户关联关系数据信息
+     *
+     * @param accountId 账户 ID
+     * @return 账户用户关联关系数据映射实体对象 {@link  AccountUserConnection}
+     */
+    AccountUserConnection findAccountUserConnectionByAccountIdEquals(Long accountId);
 }
