@@ -51,5 +51,5 @@ public interface RoleRepository extends JpaRepository<Role, Long>, CrudRepositor
      * @param idList       角色 ID 列表
      * @return 存在返回 true, 不存在返回 false
      */
-    Boolean existsByRoleCodeInAndIdNotIn(List<String> roleCodeList, List<Long> idList);
+    Boolean existsByRoleCodeInAndIdNotInAndRoleStatusEquals(List<String> roleCodeList, List<Long> idList, Integer roleStatus);
 }
