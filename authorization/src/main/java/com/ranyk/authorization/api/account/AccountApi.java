@@ -74,7 +74,7 @@ import java.util.List;
  * @date: 2025-12-18
  */
 @RestController
-@RequestMapping("/account/")
+@RequestMapping("/api/account/")
 public class AccountApi {
 
     /**
