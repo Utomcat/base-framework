@@ -76,7 +76,7 @@ public class RolePermissionsConnectionService {
         // 4. 构建角色权限关联关系数据库对象集合
         List<RolePermissionConnection> needSaveRolePermissionsConnectionList = needSaveRolePermissionsList.stream().map(rolePermissionConnectionDTO -> RolePermissionConnection.builder().roleId(rolePermissionConnectionDTO.getRoleId()).permissionId(rolePermissionConnectionDTO.getPermissionId()).createId(currentUserId).createTime(now).updateId(currentUserId).updateTime(now).build()).toList();
         // 5. 批量保存角色权限关联关系信息
-        List<RolePermissionConnection> rolePermissionConnections = rolePermissionsConnectionRepository.saveAll(needSaveRolePermissionsConnectionList);
+        List<RolePermissionConnection> rolePermissionConnections = rolePermissionsConnectionRepository.saveAllAndFlush(needSaveRolePermissionsConnectionList);
         if (!Objects.equals(rolePermissionConnections.size(), needSaveRolePermissionsConnectionList.size())) {
             log.error("角色权限关联关系保存失败,需要保存的权限数据量为: {} ,实际保存的权限数据量为: {} !", needSaveRolePermissionsConnectionList.size(), rolePermissionConnections.size());
             throw new ServiceException("create.data.fail");
