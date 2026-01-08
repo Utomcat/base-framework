@@ -6,6 +6,7 @@ import com.ranyk.model.business.login.vo.LoginAccountInfoVO;
 import com.ranyk.model.response.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -61,10 +62,10 @@ public class LoginApi {
      * @return 登录结果
      */
     @PostMapping
-    public R<LoginAccountInfoVO> login(AccountDTO accountDTO) {
+    public R<LoginAccountInfoVO> login(@RequestBody AccountDTO accountDTO) {
         // 调用登录业务逻辑
         AccountDTO loginResult = loginService.login(accountDTO);
         // 构造返回结果对象
-        return R.ok(LoginAccountInfoVO.builder().tokenName(loginResult.getTokenName()).tokenValue(loginResult.getTokenValue()).build());
+        return R.ok(LoginAccountInfoVO.builder().tokenName(loginResult.getTokenName()).tokenValue(loginResult.getTokenValue()).account(loginResult.getUserName()).userAccount(loginResult.getUserAccount()).avatar(loginResult.getAvatar()).build());
     }
 }
