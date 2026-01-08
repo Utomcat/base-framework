@@ -4,9 +4,11 @@ import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
 import com.ranyk.authorization.repository.permissions.PermissionRepository;
+import com.ranyk.authorization.service.account.AccountRoleConnectionService;
 import com.ranyk.authorization.service.role.RolePermissionsConnectionService;
 import com.ranyk.common.constant.AccountPermissionEnum;
 import com.ranyk.common.constant.PermissionsStatusEnum;
+import com.ranyk.model.business.account.dto.AccountRoleConnectionDTO;
 import com.ranyk.model.business.permission.dto.PermissionsDTO;
 import com.ranyk.model.business.permission.entity.Permission;
 import com.ranyk.model.business.permission.vo.PermissionsVO;
@@ -46,20 +48,28 @@ public class PermissionsService {
      */
     private final PermissionRepository permissionRepository;
     /**
-     * 角色权限关联信息数据库操作类对象
+     * 角色权限关联信息业务逻辑类对象
      */
     private final RolePermissionsConnectionService rolePermissionsConnectionService;
+    /**
+     * 账户角色关联信息业务逻辑类对象
+     */
+    private final AccountRoleConnectionService accountRoleConnectionService;
 
     /**
      * 构造函数
      *
      * @param permissionRepository             权限信息数据库操作类对象
      * @param rolePermissionsConnectionService 角色权限关联信息业务逻辑类对象
+     * @param accountRoleConnectionService     账户角色关联信息业务逻辑类对象
      */
     @Autowired
-    public PermissionsService(PermissionRepository permissionRepository, RolePermissionsConnectionService rolePermissionsConnectionService) {
+    public PermissionsService(PermissionRepository permissionRepository,
+                              RolePermissionsConnectionService rolePermissionsConnectionService,
+                              AccountRoleConnectionService accountRoleConnectionService) {
         this.permissionRepository = permissionRepository;
         this.rolePermissionsConnectionService = rolePermissionsConnectionService;
+        this.accountRoleConnectionService = accountRoleConnectionService;
     }
 
     /**
@@ -100,6 +110,33 @@ public class PermissionsService {
     }
 
     /**
+     * 通过 账户Id 查询该账户下的权限信息
+     *
+     * @param accountId 需要查询权限信息的 账户 Id
+     * @return 查询到的权限信息 List 集合 {@link PermissionsDTO}
+     */
+    public List<PermissionsDTO> getPermissionListByAccountIds(Long accountId) {
+        // 1. 判断当前账户是否拥有账户权限查询权限
+        if (!StpUtil.hasPermission(AccountPermissionEnum.QUERY_PERMISSIONS_INFO.getCode())) {
+            log.error("当前账户没有权限查询权限, 不进行权限信息查询逻辑!");
+            throw new ServiceException("no.view.permission", AccountPermissionEnum.QUERY_PERMISSIONS_INFO.getCode());
+        }
+        // 2. 判断账户 Id 是否为 null
+        if (Objects.isNull(accountId)){
+            log.error("未传入账户 Id, 不进行权限信息查询逻辑!");
+            throw new ServiceException("no.data.need.query");
+        }
+        // 3. 通过账户 Id 获取账户角色关联信息 List 集合
+        List<AccountRoleConnectionDTO> accountRoleConnectionDTOList = Optional.of(accountRoleConnectionService.queryAccountRoleConnectionByAccountId(accountId)).orElse(Collections.emptyList());
+        // 4. 通过查询出的账户拥有角色 List 查询对应 角色权限关联信息
+        List<RolePermissionConnectionDTO> rolePermissionConnectionDTOList = Optional.of(rolePermissionsConnectionService.queryRolePermissionConnectionByRoleId(accountRoleConnectionDTOList.stream().map(AccountRoleConnectionDTO::getRoleId).toList())).orElse(Collections.emptyList());
+        // 5. 通过查询的角色权限关联信息 List 获取对应的权限信息
+        List<Permission> permissionList = Optional.of(permissionRepository.findAllById(rolePermissionConnectionDTOList.stream().map(RolePermissionConnectionDTO::getPermissionId).toList())).orElse(Collections.emptyList());
+        // 6. 获取权限信息 List 集合,并将其转换为 PermissionDTO 列表
+        return BeanUtil.copyToList(permissionList, PermissionsDTO.class);
+    }
+
+    /**
      * 新增权限信息
      *
      * @param permissionsDTOList 新增权限信息数据封装对象 List 集合, 单个权限信息为 {@link PermissionsDTO}
@@ -133,9 +170,9 @@ public class PermissionsService {
             return permission;
         }).toList();
         // 7. 保存权限信息
-        List<Permission> permissions = permissionRepository.saveAll(permissionList);
+        List<Permission> permissions = permissionRepository.saveAllAndFlush(permissionList);
         // 8. 判断是否保存一致
-        if (Objects.equals(permissions.size(), permissionsDTOList.size())) {
+        if (!Objects.equals(permissions.size(), permissionsDTOList.size())) {
             log.error("新增权限信息失败, 新增权限数量为: {}", permissions.size());
             throw new ServiceException("create.permission.fail");
         }
@@ -245,7 +282,7 @@ public class PermissionsService {
     public PageVO<List<PermissionsVO>> queryPermissions(PermissionsDTO permissionsDTO) {
         // 1. 判断当前用户是否具有权限查询权限信息
         if (!StpUtil.hasPermission(AccountPermissionEnum.QUERY_PERMISSIONS_INFO.getCode())) {
-            throw new ServiceException("no.query.permission");
+            throw new ServiceException("no.view.permission", AccountPermissionEnum.QUERY_PERMISSIONS_INFO.getCode());
         }
         // 2. 获取查询条件,构建 Specification 对象, 等价于 MyBatis Plus 的 QueryWrapper
         Specification<Permission> spec = (Root<Permission> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
