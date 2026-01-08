@@ -61,7 +61,7 @@ import java.util.List;
  * @date: 2025-12-18
  */
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/user")
 public class UserApi {
     /**
      * 用户服务类对象
