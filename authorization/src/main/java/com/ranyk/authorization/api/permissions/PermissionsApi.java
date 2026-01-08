@@ -1,5 +1,6 @@
 package com.ranyk.authorization.api.permissions;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.ranyk.authorization.service.permissions.PermissionsService;
 import com.ranyk.model.business.permission.dto.PermissionsDTO;
 import com.ranyk.model.business.permission.vo.PermissionsVO;
@@ -57,7 +58,7 @@ import java.util.List;
  * @date: 2025-12-18
  */
 @RestController
-@RequestMapping("/permissions")
+@RequestMapping("/api/permissions")
 public class PermissionsApi {
 
     /**
@@ -118,8 +119,30 @@ public class PermissionsApi {
      * @return 查询权限结果 分页查询结果对象 {@link PageVO}, 单个权限数据参见 {@link PermissionsVO}
      */
     @GetMapping
-    public R<PageVO<List<PermissionsVO>>> queryPermissions(PermissionsDTO permissionsDTO){
+    public R<PageVO<List<PermissionsVO>>> queryPermissions(PermissionsDTO permissionsDTO) {
         return R.ok(permissionsService.queryPermissions(permissionsDTO));
+    }
+
+    /**
+     * 根据 角色ID 查询该角色下的权限信息
+     *
+     * @param roleId 需要查询的 角色ID
+     * @return 该角色下的权限信息 List 集合, 单个权限信息参见 {@link PermissionsVO}
+     */
+    @GetMapping("/role/{roleId}")
+    public R<List<PermissionsVO>> queryPermissionsByRoleId(@PathVariable Long roleId) {
+        return R.ok(BeanUtil.copyToList(permissionsService.getPermissionListByRoleIds(List.of(roleId)), PermissionsVO.class));
+    }
+
+    /**
+     * 根据 账号ID 获取该账号下的权限信息
+     *
+     * @param accountId 需要查询的 账号ID
+     * @return 该账号下的权限信息 List 集合, 单个权限信息参见 {@link PermissionsVO}
+     */
+    @GetMapping("/account/{accountId}")
+    public R<List<PermissionsVO>> queryPermissionsByAccountId(@PathVariable Long accountId) {
+        return R.ok(BeanUtil.copyToList(permissionsService.getPermissionListByAccountIds(accountId), PermissionsVO.class));
     }
 
 
