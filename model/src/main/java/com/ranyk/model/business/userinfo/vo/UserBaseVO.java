@@ -59,6 +59,10 @@ public class UserBaseVO implements Serializable {
      */
     private String email;
     /**
+     * 用户头像地址
+     */
+    private String avatar;
+    /**
      * 用户状态: -1: 删除; 0: 无效; 1: 正常(默认);
      */
     private Integer status;

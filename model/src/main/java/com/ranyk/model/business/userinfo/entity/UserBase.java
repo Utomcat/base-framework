@@ -57,23 +57,28 @@ public class UserBase implements Serializable {
     /**
      * 用户昵称
      */
-    @Column(name = "user_nick_name", nullable = false, columnDefinition = "varchar(500) COMMENT '用户昵称'")
+    @Column(name = "user_nick_name", nullable = false, columnDefinition = "varchar(500) DEFAULT '-' COMMENT '用户昵称'")
     private String nickName;
     /**
      * 用户座机/固定电话
      */
-    @Column(name = "user_fixed_line_phone", nullable = false, columnDefinition = "varchar(500) COMMENT '用户座机/固定电话'")
+    @Column(name = "user_fixed_line_phone", nullable = false, columnDefinition = "varchar(500) DEFAULT '-' COMMENT '用户座机/固定电话'")
     private String fixedLinePhone;
     /**
      * 用户电话
      */
-    @Column(name = "user_phone", nullable = false, columnDefinition = "varchar(500) COMMENT '用户电话'")
+    @Column(name = "user_phone", nullable = false, columnDefinition = "varchar(500) DEFAULT '-' COMMENT '用户电话'")
     private String phone;
     /**
      * 用户邮箱
      */
-    @Column(name = "user_email", nullable = false, columnDefinition = "varchar(500) COMMENT '用户邮箱'")
+    @Column(name = "user_email", nullable = false, columnDefinition = "varchar(500) DEFAULT '-' COMMENT '用户邮箱'")
     private String email;
+    /**
+     * 用户头像地址
+     */
+    @Column(name = "user_avatar", nullable = false, columnDefinition = "varchar(1000) DEFAULT 'C:\\Users\\ranyk\\Pictures\\fHe1eSEYZ.png' COMMENT '用户头像地址'")
+    private String avatar;
     /**
      * 用户状态: -1: 删除; 0: 无效; 1: 正常(默认);
      */
