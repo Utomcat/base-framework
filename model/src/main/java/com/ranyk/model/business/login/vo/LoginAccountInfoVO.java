@@ -26,9 +26,21 @@ public class LoginAccountInfoVO implements Serializable {
     /**
      * 登录成功后的 SA-TOKEN 认证令牌 token 名称
      */
-    public String tokenName;
+    private String tokenName;
     /**
      * 登录成功后的 SA-TOKEN 认证令牌 token 值
      */
-    public String tokenValue;
+    private String tokenValue;
+    /**
+     * 登录账户的账户名
+     */
+    private String account;
+    /**
+     * 登录账户的用户名
+     */
+    private String userAccount;
+    /**
+     * 登录账户的头像
+     */
+    private String avatar;
 }
