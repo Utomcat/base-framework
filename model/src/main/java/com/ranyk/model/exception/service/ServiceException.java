@@ -63,6 +63,18 @@ public class ServiceException extends RuntimeException {
         this.code = code;
     }
 
+
+    /**
+     * 创建一个 ServiceException 错误对象
+     *
+     * @param message 错误信息
+     * @param args    错误参数数组
+     */
+    public ServiceException(String message, Object... args) {
+        this.message = message;
+        this.args = args;
+    }
+
     /**
      * 获取错误消息 如果对应的错误码不为空,则返回通过该错误码获取对应的国际化错误消息,否则返回默认消息
      *
@@ -74,7 +86,7 @@ public class ServiceException extends RuntimeException {
         if (Objects.nonNull(code)) {
             messageStr = MessageUtils.message(String.valueOf(code), args);
         } else {
-            messageStr = Objects.nonNull(message) ? message : detailMessage;
+            messageStr = Objects.nonNull(message) ? MessageUtils.message(message, args) : MessageUtils.message(detailMessage, args);
         }
         return messageStr;
     }
