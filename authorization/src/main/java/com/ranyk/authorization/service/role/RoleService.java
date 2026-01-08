@@ -142,14 +142,14 @@ public class RoleService {
         // 7. 组装对应的角色信息数据
         List<Role> needSaveRoleList = roleDTOList.stream().map(roleDTO -> Role.builder().roleName(roleDTO.getRoleName()).roleCode(roleDTO.getRoleCode()).roleStatus(RoleStatusEnum.NORMAL.getCode()).createId(loginId).updateId(loginId).createTime(now).updateTime(now).build()).toList();
         // 8. 保存角色信息
-        roleRepository.saveAll(needSaveRoleList);
+        List<Role> saveRoleList = roleRepository.saveAllAndFlush(needSaveRoleList);
         // 9. 判断是否保存一致
-        if (Objects.equals(needSaveRoleList.size(), roleDTOList.size())) {
+        if (!Objects.equals(saveRoleList.size(), roleDTOList.size())) {
             log.error("新增角色信息失败,需新增的角色数量为: {} ,实际新增角色数量为: {}", roleDTOList.size(), needSaveRoleList.size());
             throw new ServiceException("create.data.fail");
         }
         // 10. 输出日志
-        log.info("新增角色信息成功,需新增的角色数量为: {} ,实际新增角色数量为: {}", roleDTOList.size(), needSaveRoleList.size());
+        log.info("新增角色信息成功,需新增的角色数量为: {} ,实际新增角色数量为: {}", roleDTOList.size(), saveRoleList.size());
     }
 
     /**
@@ -170,13 +170,8 @@ public class RoleService {
         }
         // 3. 执行更新数据操作
         int updateCount = roleRepository.updateRoleStatusByIds(roleDTO.getIds(), RoleStatusEnum.DELETED.getCode(), StpUtil.getLoginIdAsLong(), LocalDateTime.now());
-        // 4. 判断是否删除一致
-        if (!Objects.equals(updateCount, roleDTO.getIds().size())) {
-            log.error("删除角色信息失败,需删除的角色数量为: {} ,实际删除角色数量为: {}", roleDTO.getIds().size(), updateCount);
-            throw new ServiceException("delete.data.fail");
-        }
-        // 5. 输出日志
-        log.info("删除角色信息成功, 删除角色数量为: {}", updateCount);
+        // 4. 输出日志
+        log.info("删除角色信息成功, 需删除的角色数量为: {} , 实际删除角色数量为: {}", roleDTO.getIds().size(), updateCount);
     }
 
     /**
@@ -210,7 +205,7 @@ public class RoleService {
         // 4. 判断是否已经存在指定的角色代码存在,但是数据ID 不是当前的数据 ID
         List<String> roleCodeList = roleDTOList.stream().map(RoleDTO::getRoleCode).filter(StrUtil::isNotBlank).toList();
         List<Long> idList = roleDTOList.stream().map(RoleDTO::getId).filter(Objects::nonNull).toList();
-        if (roleRepository.existsByRoleCodeInAndIdNotIn(roleCodeList, idList)) {
+        if (roleRepository.existsByRoleCodeInAndIdNotInAndRoleStatusEquals(roleCodeList, idList, RoleStatusEnum.NORMAL.getCode())) {
             throw new ServiceException("duplicate.data.found");
         }
         // 5. 获取当前登录账户的账户 ID
@@ -260,7 +255,7 @@ public class RoleService {
     public PageVO<List<RoleVO>> queryRoleList(RoleDTO roleDTO) {
         // 1. 判断当前是否拥有角色的查询权限
         if (!StpUtil.hasPermission(AccountPermissionEnum.QUERY_ROLE_INFO.getCode())) {
-            throw new ServiceException("no.query.permission");
+            throw new ServiceException("no.view.permission");
         }
         // 2. 获取查询条件,构建 Specification 对象, 等价于 MyBatis Plus 的 QueryWrapper
         Specification<Role> spec = (Root<Role> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
@@ -286,7 +281,7 @@ public class RoleService {
             return cb.and(predicates.toArray(new Predicate[0]));
         };
         // 3. 执行查询
-        Page<Role> rolePage = roleRepository.findAll(spec, PageRequest.of(roleDTO.getPageNum(), roleDTO.getPageSize(), Sort.by(Sort.Direction.DESC, "updateTime")));
+        Page<Role> rolePage = roleRepository.findAll(spec, PageRequest.of(roleDTO.getPageNum() - 1, roleDTO.getPageSize(), Sort.by(Sort.Direction.DESC, "updateTime")));
         // 4. 返回查询结果
         return PageVO.<List<RoleVO>>builder()
                 .data(BeanUtil.copyToList(rolePage.getContent(), RoleVO.class))
