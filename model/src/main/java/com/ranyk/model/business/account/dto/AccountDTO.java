@@ -30,11 +30,11 @@ public class AccountDTO extends BaseDTO implements Serializable {
      */
     private Long id;
     /**
-     * 用户名
+     * 账户登录账号
      */
     private String userName;
     /**
-     * 密码
+     * 账户密码
      */
     private String password;
     /**
@@ -49,4 +49,18 @@ public class AccountDTO extends BaseDTO implements Serializable {
      * 登录成功后的 SA-TOKEN 认证令牌 token 值
      */
     public String tokenValue;
+
+    // 以下为其他属性
+    /**
+     * 用户信息 ID
+     */
+    private Long userInfoId;
+    /**
+     * 用户头像地址
+     */
+    private String avatar;
+    /**
+     * 用户名
+     */
+    private String userAccount;
 }
