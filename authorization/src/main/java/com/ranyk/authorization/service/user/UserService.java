@@ -222,7 +222,7 @@ public class UserService {
     public PageVO<List<UserBaseVO>> queryUser(UserBaseDTO userBaseDTO) {
         // 1. 判断当前用户是否有权限查询用户信息
         if (!StpUtil.hasPermission(AccountPermissionEnum.QUERY_USER_INFO.getCode())) {
-            throw new UserException("no.query.permission");
+            throw new UserException("no.view.permission");
         }
         // 2. 获取查询条件,构建 Specification 对象, 等价于 MyBatis Plus 的 QueryWrapper
         Specification<UserBase> spec = (Root<UserBase> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
@@ -280,5 +280,20 @@ public class UserService {
                 .totalPage(userBasePage.getTotalPages())
                 .total(userBasePage.getTotalElements())
                 .build();
+    }
+
+    /**
+     * 通过指定用户 ID 查询对应的用户信息
+     *
+     * @param userBaseDTO 查询用户信息条件数据封装对象,参见 {@link UserBaseDTO#getId()} 属性
+     * @return 查询用户信息结果, 参见 {@link UserBaseDTO}
+     */
+    public UserBaseDTO queryUserInfoById(UserBaseDTO userBaseDTO){
+        if (Objects.isNull(userBaseDTO.getId())){
+            log.error("查询用户信息失败,用户 ID 为空!");
+            throw new UserException("data.incomplete");
+        }
+        UserBase userBase = userBaseRepository.findById(userBaseDTO.getId()).orElse(UserBase.builder().build());
+        return BeanUtil.copyProperties(userBase, UserBaseDTO.class);
     }
 }
