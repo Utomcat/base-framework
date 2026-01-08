@@ -282,4 +282,19 @@ public class AccountService {
         // 4. 新增账户角色关联关系
         accountRoleConnectionService.addAccountRoleConnection(accountRoleConnectionDTOList);
     }
+
+    /**
+     * 通过账户 ID 查询账户关联的用户 ID
+     *
+     * @param accountDTO 账户 ID 信息数据封装对象, 属性值封装, 参见 {@link AccountDTO#getId()} 属性
+     * @return 返回属性封装在 {@link AccountDTO#getUserInfoId()}
+     */
+    public AccountDTO queryUserInfoIdByAccountId(AccountDTO accountDTO){
+        if (Objects.isNull(accountDTO.getId())){
+            log.error("账户 ID 不能为空!");
+            throw new ServiceException("data.incomplete");
+        }
+        AccountUserConnectionDTO accountUserConnectionDTO = accountUserConnectionService.queryUserInfoIdByAccountId(AccountUserConnectionDTO.builder().accountId(accountDTO.getId()).build());
+        return AccountDTO.builder().userInfoId(accountUserConnectionDTO.getUserId()).build();
+    }
 }
