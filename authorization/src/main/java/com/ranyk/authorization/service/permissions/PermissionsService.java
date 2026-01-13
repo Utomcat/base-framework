@@ -75,22 +75,22 @@ public class PermissionsService {
     /**
      * 通过传入的角色 ID 列表, 获取对应的权限信息 List 集合
      *
-     * @param roleIds 传入的需要查询的 角色 ID List 集合
+     * @param permissionsDTO 传入的需要查询的 角色 ID List 集合数据封装对象,参见 {@link PermissionsDTO#getRoleIds()} 属性
      * @return 返回查询到的权限信息 List 集合, 单个权限信息为 {@link PermissionsDTO} 权限信息对象; 当传入的 roleIds 为 null 时,则返回空权限列表; 当未查询到该账户下的权限信息时,则返回空权限列表;
      */
-    public List<PermissionsDTO> getPermissionListByRoleIds(List<Long> roleIds) {
+    public List<PermissionsDTO> getPermissionListByRoleIds(PermissionsDTO permissionsDTO) {
         // 1. 判断传入的 roleIds 是否为 null
-        if (Objects.isNull(roleIds)) {
+        if (Objects.isNull(permissionsDTO.getRoleIds())) {
             log.error("未传入角色 ID List 集合, 不进行权限信息查询逻辑,直接返回空权限列表!");
             return Collections.emptyList();
         }
         // 2. 判断 roleIds 是否没有元素
-        if (roleIds.isEmpty()) {
+        if (permissionsDTO.getRoleIds().isEmpty()) {
             log.error("传入的 roleIds 为空, 不进行权限信息查询逻辑,直接返回空权限列表!");
             return Collections.emptyList();
         }
         // 3. 通过传入的 roleIds 获取对应的角色权限关联信息 List 集合
-        List<RolePermissionConnectionDTO> rolePermissionConnectionDTOList = rolePermissionsConnectionService.queryRolePermissionConnectionByRoleId(roleIds);
+        List<RolePermissionConnectionDTO> rolePermissionConnectionDTOList = rolePermissionsConnectionService.queryRolePermissionConnectionByRoleId(permissionsDTO.getRoleIds());
         // 4. 判断角色权限关联信息 List 集合是否没有元素
         if (rolePermissionConnectionDTOList.isEmpty()) {
             log.error("未查询到该账户下的权限信息, 直接返回空权限列表!");
@@ -112,22 +112,23 @@ public class PermissionsService {
     /**
      * 通过 账户Id 查询该账户下的权限信息
      *
-     * @param accountId 需要查询权限信息的 账户 Id
+     * @param permissionsDTO    需要查询权限信息的 账户 Id 数据封装对象, 参见 {@link PermissionsDTO#getAccountId()} 属性
+     * @param isCheckPermission 是否需要检查权限
      * @return 查询到的权限信息 List 集合 {@link PermissionsDTO}
      */
-    public List<PermissionsDTO> getPermissionListByAccountIds(Long accountId) {
+    public List<PermissionsDTO> getPermissionListByAccountIds(PermissionsDTO permissionsDTO, Boolean isCheckPermission) {
         // 1. 判断当前账户是否拥有账户权限查询权限
-        if (!StpUtil.hasPermission(AccountPermissionEnum.QUERY_PERMISSIONS_INFO.getCode())) {
+        if (isCheckPermission && !StpUtil.hasPermission(AccountPermissionEnum.QUERY_PERMISSIONS_INFO.getCode())) {
             log.error("当前账户没有权限查询权限, 不进行权限信息查询逻辑!");
             throw new ServiceException("no.view.permission", AccountPermissionEnum.QUERY_PERMISSIONS_INFO.getCode());
         }
         // 2. 判断账户 Id 是否为 null
-        if (Objects.isNull(accountId)){
+        if (Objects.isNull(permissionsDTO.getAccountId())) {
             log.error("未传入账户 Id, 不进行权限信息查询逻辑!");
             throw new ServiceException("no.data.need.query");
         }
         // 3. 通过账户 Id 获取账户角色关联信息 List 集合
-        List<AccountRoleConnectionDTO> accountRoleConnectionDTOList = Optional.of(accountRoleConnectionService.queryAccountRoleConnectionByAccountId(accountId)).orElse(Collections.emptyList());
+        List<AccountRoleConnectionDTO> accountRoleConnectionDTOList = Optional.of(accountRoleConnectionService.queryAccountRoleConnectionByAccountId(permissionsDTO.getAccountId())).orElse(Collections.emptyList());
         // 4. 通过查询出的账户拥有角色 List 查询对应 角色权限关联信息
         List<RolePermissionConnectionDTO> rolePermissionConnectionDTOList = Optional.of(rolePermissionsConnectionService.queryRolePermissionConnectionByRoleId(accountRoleConnectionDTOList.stream().map(AccountRoleConnectionDTO::getRoleId).toList())).orElse(Collections.emptyList());
         // 5. 通过查询的角色权限关联信息 List 获取对应的权限信息
@@ -152,8 +153,8 @@ public class PermissionsService {
             throw new ServiceException("no.data.need.create");
         }
         // 3. 判断当前新增的权限 code 是否当前系统已经存在
-        if (permissionRepository.existsByPermissionCodeIn(permissionsDTOList.stream().map(PermissionsDTO::getPermissionCode).toList())) {
-            throw new ServiceException("duplicate.data.found");
+        if (permissionRepository.existsByCodeIn(permissionsDTOList.stream().map(PermissionsDTO::getCode).toList())) {
+            throw new ServiceException("duplicate.data.found", permissionsDTOList.stream().map(PermissionsDTO::getCode).toList());
         }
         // 4. 获取当前用户 ID
         long loginId = StpUtil.getLoginIdAsLong();
@@ -162,11 +163,12 @@ public class PermissionsService {
         // 6. 遍历权限数据 List 集合,组装对应的权限信息保存 List 集合
         List<Permission> permissionList = permissionsDTOList.stream().map(permissionsDTO -> {
             Permission permission = BeanUtil.copyProperties(permissionsDTO, Permission.class);
+            permission.setId(null);
             permission.setCreateId(loginId);
             permission.setUpdateId(loginId);
             permission.setCreateTime(now);
             permission.setUpdateTime(now);
-            permission.setPermissionStatus(PermissionsStatusEnum.NORMAL.getCode());
+            permission.setStatus(PermissionsStatusEnum.NORMAL.getCode());
             return permission;
         }).toList();
         // 7. 保存权限信息
@@ -223,17 +225,17 @@ public class PermissionsService {
                 throw new ServiceException("data.incomplete");
             } else {
                 // 权限名称、权限代码、权限状态不能同时为空
-                if (StrUtil.isBlank(permissionsDTO.getPermissionName())
-                        && StrUtil.isBlank(permissionsDTO.getPermissionCode())
-                        && Objects.isNull(permissionsDTO.getPermissionStatus())) {
+                if (StrUtil.isBlank(permissionsDTO.getName())
+                        && StrUtil.isBlank(permissionsDTO.getCode())
+                        && Objects.isNull(permissionsDTO.getStatus())) {
                     throw new ServiceException("data.incomplete");
                 }
             }
         });
         // 4. 判断是否已经存在指定的权限代码存在,但是数据 ID 不是当前的数据 ID
-        List<String> permissionCodeList = permissionsDTOList.stream().map(PermissionsDTO::getPermissionCode).filter(StrUtil::isNotBlank).toList();
+        List<String> permissionCodeList = permissionsDTOList.stream().map(PermissionsDTO::getCode).filter(StrUtil::isNotBlank).toList();
         List<Long> idList = permissionsDTOList.stream().map(PermissionsDTO::getId).filter(Objects::nonNull).toList();
-        if (permissionRepository.existsByPermissionCodeInAndIdNotIn(permissionCodeList, idList)) {
+        if (permissionRepository.existsByCodeInAndIdNotIn(permissionCodeList, idList)) {
             throw new ServiceException("duplicate.data.found");
         }
         // 5. 获取当前用户 ID
@@ -250,15 +252,17 @@ public class PermissionsService {
         // 8. 遍历对应的权限数据 List 集合, 组装对应的权限信息
         permissionList.forEach(permission -> {
             PermissionsDTO permissionsDTO = needSavePermissionMap.get(permission.getId());
-            if (StrUtil.isNotBlank(permissionsDTO.getPermissionName())) {
-                permission.setPermissionName(permissionsDTO.getPermissionName());
+            if (StrUtil.isNotBlank(permissionsDTO.getName())) {
+                permission.setName(permissionsDTO.getName());
             }
-            if (StrUtil.isNotBlank(permissionsDTO.getPermissionCode())) {
-                permission.setPermissionCode(permissionsDTO.getPermissionCode());
+            if (StrUtil.isNotBlank(permissionsDTO.getCode())) {
+                permission.setCode(permissionsDTO.getCode());
             }
-            if (Objects.nonNull(permissionsDTO.getPermissionStatus())) {
-                permission.setPermissionStatus(permissionsDTO.getPermissionStatus());
+            if (Objects.nonNull(permissionsDTO.getStatus())) {
+                permission.setStatus(permissionsDTO.getStatus());
             }
+            permission.setDesc(permissionsDTO.getDesc());
+            permission.setRemark(permissionsDTO.getRemark());
             permission.setUpdateId(loginId);
             permission.setUpdateTime(now);
         });
@@ -292,17 +296,29 @@ public class PermissionsService {
             if (Objects.nonNull(permissionsDTO.getId())) {
                 predicates.add(cb.equal(root.get("id"), permissionsDTO.getId()));
             }
-            // 动态条件2：permissionName不为空时，模糊查询（对标wrapper.like("permissionName", permissionName)）
-            if (StrUtil.isNotBlank(permissionsDTO.getPermissionName())) {
-                predicates.add(cb.like(root.get("permissionName"), "%" + permissionsDTO.getPermissionName() + "%"));
+            // 动态条件2：name 不为空时，模糊查询（对标wrapper.like("name", name)）
+            if (StrUtil.isNotBlank(permissionsDTO.getName())) {
+                predicates.add(cb.like(root.get("name"), "%" + permissionsDTO.getName() + "%"));
             }
-            // 动态条件3：permissionCode不为空时，模糊查询（对标wrapper.like("permissionCode", permissionCode)）
-            if (StrUtil.isNotBlank(permissionsDTO.getPermissionCode())) {
-                predicates.add(cb.like(root.get("permissionCode"), "%" + permissionsDTO.getPermissionCode() + "%"));
+            // 动态条件3：code 不为空时，模糊查询（对标wrapper.like("code", code)）
+            if (StrUtil.isNotBlank(permissionsDTO.getCode())) {
+                predicates.add(cb.like(root.get("code"), "%" + permissionsDTO.getCode() + "%"));
             }
-            // 动态条件4：permissionStatus不为空时，精确查询（对标wrapper.eq("permissionStatus", permissionStatus)）
-            if (Objects.nonNull(permissionsDTO.getPermissionStatus())) {
-                predicates.add(cb.equal(root.get("permissionStatus"), permissionsDTO.getPermissionStatus()));
+            // 动态条件4：status 不为空时，精确查询（对标wrapper.eq("status", status)）
+            if (Objects.nonNull(permissionsDTO.getStatus())) {
+                predicates.add(cb.equal(root.get("status"), permissionsDTO.getStatus()));
+            }
+            // 动态条件5：remark 不为空时，模糊查询（对标wrapper.like("remark", remark)）
+            if (StrUtil.isNotBlank(permissionsDTO.getRemark())){
+                predicates.add(cb.like(root.get("remark"), "%" + permissionsDTO.getRemark() + "%"));
+            }
+            // 动态条件6：desc 不为空时，模糊查询（对标wrapper.like("desc", desc)）
+            if (StrUtil.isNotBlank(permissionsDTO.getDesc())){
+                predicates.add(cb.like(root.get("desc"), "%" + permissionsDTO.getDesc() + "%"));
+            }
+            // 动态条件7：type 不为空时，精确查询（对标wrapper.eq("type", type)）
+            if (Objects.nonNull(permissionsDTO.getType())){
+                predicates.add(cb.equal(root.get("type"), permissionsDTO.getType()));
             }
             // 将所有条件拼接为AND关系（对标wrapper.and()），也可手动指定OR
             return cb.and(predicates.toArray(new Predicate[0]));
@@ -316,5 +332,16 @@ public class PermissionsService {
                 .totalPage(permissionPagepage.getTotalPages())
                 .total(permissionPagepage.getTotalElements())
                 .build();
+    }
+
+    /**
+     * 获取当前登录用户权限信息
+     *
+     * @return 当前登录用户权限信息 List 集合, 单个权限数据参见 {@link PermissionsDTO}
+     */
+    public List<PermissionsDTO> getCurrentUserOfPermissions() {
+        // 1. 获取当前登录用户ID
+        Long loginId = StpUtil.getLoginIdAsLong();
+        return this.getPermissionListByAccountIds(PermissionsDTO.builder().accountId(loginId).build(), Boolean.TRUE);
     }
 }

@@ -130,8 +130,8 @@ public class PermissionsApi {
      * @return 该角色下的权限信息 List 集合, 单个权限信息参见 {@link PermissionsVO}
      */
     @GetMapping("/role/{roleId}")
-    public R<List<PermissionsVO>> queryPermissionsByRoleId(@PathVariable Long roleId) {
-        return R.ok(BeanUtil.copyToList(permissionsService.getPermissionListByRoleIds(List.of(roleId)), PermissionsVO.class));
+    public R<List<PermissionsVO>> getPermissionsByRoleId(@PathVariable Long roleId) {
+        return R.ok(BeanUtil.copyToList(permissionsService.getPermissionListByRoleIds(PermissionsDTO.builder().roleIds(List.of(roleId)).build()), PermissionsVO.class));
     }
 
     /**
@@ -141,8 +141,18 @@ public class PermissionsApi {
      * @return 该账号下的权限信息 List 集合, 单个权限信息参见 {@link PermissionsVO}
      */
     @GetMapping("/account/{accountId}")
-    public R<List<PermissionsVO>> queryPermissionsByAccountId(@PathVariable Long accountId) {
-        return R.ok(BeanUtil.copyToList(permissionsService.getPermissionListByAccountIds(accountId), PermissionsVO.class));
+    public R<List<PermissionsVO>> getPermissionsByAccountId(@PathVariable Long accountId) {
+        return R.ok(BeanUtil.copyToList(permissionsService.getPermissionListByAccountIds(PermissionsDTO.builder().accountId(accountId).build(), Boolean.TRUE), PermissionsVO.class));
+    }
+
+    /**
+     * 查询当前登录用户的权限信息
+     *
+     * @return 当前登录用户的权限信息 List 集合, 单个权限信息参见 {@link PermissionsVO}
+     */
+    @GetMapping("/current/user")
+    public R<List<PermissionsVO>> getCurrentUserOfPermissions() {
+        return R.ok(BeanUtil.copyToList(permissionsService.getCurrentUserOfPermissions(), PermissionsVO.class));
     }
 
 
