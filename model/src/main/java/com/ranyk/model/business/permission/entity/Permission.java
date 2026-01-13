@@ -1,11 +1,14 @@
 package com.ranyk.model.business.permission.entity;
 
-import jakarta.persistence.*;
+import com.ranyk.model.base.entity.Base;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 /**
  * CLASS_NAME: Permission.java
@@ -18,56 +21,39 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
-@Builder
 @ToString
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "permission_info")
-public class Permission implements Serializable {
+public class Permission extends Base implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 8832722799279624678L;
-    /**
-     * 主键 ID
-     */
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", nullable = false, columnDefinition = "BIGINT AUTO_INCREMENT COMMENT '主键 ID'")
-    private Long id;
+
     /**
      * 权限名称
      */
     @Column(name = "permission_name", nullable = false, columnDefinition = "varchar(500) COMMENT '权限名称'")
-    private String permissionName;
+    private String name;
     /**
      * 权限代码
      */
     @Column(name = "permission_code", nullable = false, columnDefinition = "varchar(500) COMMENT '权限代码'")
-    private String permissionCode;
+    private String code;
+    /**
+     * 权限描述
+     */
+    @Column(name = "permission_desc", columnDefinition = "varchar(500) COMMENT '权限描述'")
+    private String desc;
+    /**
+     * 权限类型: 1: 菜单; 2: 按钮; 3: 功能; 4: 其他;
+     */
+    @Column(name = "permission_type", nullable = false, columnDefinition = "TINYINT DEFAULT 1 COMMENT '权限类型: 1: 菜单; 2: 按钮; 3: 功能; 4: 其他;'")
+    private Integer type;
     /**
      * 权限状态: 1: 正常(默认); -1: 删除/停用;
      */
     @Column(name = "permission_status", nullable = false, columnDefinition = "TINYINT DEFAULT 1 COMMENT '权限状态: 1: 正常(默认); -1: 删除/停用;'")
-    private Integer permissionStatus;
-    /**
-     * 数据创建时间
-     */
-    @Column(name = "create_time", nullable = false, columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '数据创建时间'")
-    private LocalDateTime createTime;
-    /**
-     * 数据创建人 ID
-     */
-    @Column(name = "create_id", nullable = false, columnDefinition = "BIGINT DEFAULT 1 COMMENT '数据创建人 ID'")
-    private Long createId;
-    /**
-     * 数据更新时间
-     */
-    @Column(name = "update_time", nullable = false, columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '数据更新时间'")
-    private LocalDateTime updateTime;
-    /**
-     * 数据更新人 ID
-     */
-    @Column(name = "update_id", nullable = false, columnDefinition = "BIGINT DEFAULT 1 COMMENT '数据更新人 ID'")
-    private Long updateId;
-
+    private Integer status;
 }

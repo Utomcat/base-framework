@@ -29,13 +29,25 @@ public class PermissionsVO implements Serializable {
     /**
      * 权限名称
      */
-    private String permissionName;
+    private String name;
     /**
      * 权限代码
      */
-    private String permissionCode;
+    private String code;
+    /**
+     * 权限类型: 1: 菜单; 2: 按钮; 3: 功能; 4: 其他;
+     */
+    private Integer type;
     /**
      * 权限状态: 1: 正常(默认); -1: 删除/停用;
      */
-    private Integer permissionStatus;
+    private Integer status;
+    /**
+     * 权限描述
+     */
+    private String desc;
+    /**
+     * 权限备注
+     */
+    private String remark;
 }
