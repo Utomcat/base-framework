@@ -41,6 +41,15 @@ spring:
     encoding: UTF-8
     # 缓存时间：开发时设0（修改配置立即生效），生产可设3600（1小时）
     cache-duration: PT0S
+  servlet:
+    # 文件上传大小限制 核心配置（必须配置，否则默认值很小，上传大文件会报错）
+    multipart:
+      # 单个文件的最大允许大小 (例如 10MB，单位支持 MB/KB/GB)
+      max-file-size: 10MB
+      # 单次请求中 所有文件的总大小限制 (例如 50MB)
+      max-request-size: 50MB
+      # 是否开启文件上传支持（默认true，可省略）
+      enabled: true
 
 # 自定义语言环境
 lang:
@@ -50,3 +59,11 @@ lang:
   # 其余语言参考 Locale 类,
   # 当前只配置了 只配置了三种语言,需要新增其他语种时需要对 I18nConfigProperties 类中增加 switch 属性分支,同时需要增加对应的语言环境配置文件,参考  common/src/main/resources/i18n/messages_en_US.properties 或 common/src/main/resources/i18n/messages_zh_CN.properties 文件
   local-lang: zh_CN
+
+# 自定义配置：文件上传后的存储路径（推荐配置，方便统一管理）
+file:
+  upload:
+    # 方式1：绝对路径 - 本地固定目录（推荐生产/测试使用），例如 E:/FTP/upload/ 如果未配置该值则默认设置为 E:/FTP/upload/
+    path: E:/FTP/upload/
+    # 方式2：相对路径 - 项目根目录下的upload文件夹（适合快速测试）
+    # path: ./upload/
