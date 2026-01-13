@@ -26,19 +26,15 @@ public class RoleDTO extends BaseDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = -4312481857172481744L;
     /**
-     * 角色数据主键 ID
-     */
-    private Long id;
-    /**
      * 角色名称
      */
-    private String roleName;
+    private String name;
     /**
      * 角色代码
      */
-    private String roleCode;
+    private String code;
     /**
      * 角色状态: 1: 正常(默认); -1: 删除/停用;
      */
-    private Integer roleStatus;
+    private Integer status;
 }
