@@ -4,9 +4,11 @@ import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
 import com.ranyk.authorization.repository.user.UserBaseRepository;
+import com.ranyk.authorization.service.account.AccountUserConnectionService;
 import com.ranyk.common.constant.AccountPermissionEnum;
 import com.ranyk.common.constant.SymbolEnum;
 import com.ranyk.common.constant.UserStatusEnum;
+import com.ranyk.model.business.account.dto.AccountUserConnectionDTO;
 import com.ranyk.model.business.userinfo.dto.UserBaseDTO;
 import com.ranyk.model.business.userinfo.entity.UserBase;
 import com.ranyk.model.business.userinfo.vo.UserBaseVO;
@@ -46,15 +48,23 @@ public class UserService {
      * 用户基本信息数据库操作类对象
      */
     private final UserBaseRepository userBaseRepository;
+    /**
+     * 账户用户关联关系业务逻辑类对象
+     */
+    private final AccountUserConnectionService accountUserConnectionService;
+
 
     /**
      * 构造方法
      *
-     * @param userBaseRepository 用户基本信息数据库操作类对象
+     * @param userBaseRepository           用户基本信息数据库操作类对象
+     * @param accountUserConnectionService 账户用户关联关系业务逻辑类对象
      */
     @Autowired
-    public UserService(UserBaseRepository userBaseRepository) {
+    public UserService(UserBaseRepository userBaseRepository,
+                       AccountUserConnectionService accountUserConnectionService) {
         this.userBaseRepository = userBaseRepository;
+        this.accountUserConnectionService = accountUserConnectionService;
     }
 
     /**
@@ -288,12 +298,30 @@ public class UserService {
      * @param userBaseDTO 查询用户信息条件数据封装对象,参见 {@link UserBaseDTO#getId()} 属性
      * @return 查询用户信息结果, 参见 {@link UserBaseDTO}
      */
-    public UserBaseDTO queryUserInfoById(UserBaseDTO userBaseDTO){
-        if (Objects.isNull(userBaseDTO.getId())){
+    public UserBaseDTO queryUserInfoById(UserBaseDTO userBaseDTO) {
+        if (Objects.isNull(userBaseDTO.getId())) {
             log.error("查询用户信息失败,用户 ID 为空!");
             throw new UserException("data.incomplete");
         }
         UserBase userBase = userBaseRepository.findById(userBaseDTO.getId()).orElse(UserBase.builder().build());
         return BeanUtil.copyProperties(userBase, UserBaseDTO.class);
+    }
+
+    /**
+     * 获取当前登录用户信息
+     *
+     * @return 当前登录用户信息, 参见 {@link UserBaseDTO}
+     */
+    public UserBaseDTO getCurrentUser() {
+        // 1. 获取当前登录账户 ID
+        Long accountId = StpUtil.getLoginIdAsLong();
+        // 2. 通过当前登录账户 ID 查询当前账户和用户关联信息
+        AccountUserConnectionDTO accountUserConnectionDTO = accountUserConnectionService.queryUserInfoIdByAccountId(AccountUserConnectionDTO.builder().accountId(accountId).build());
+        // 3. 通过用户 ID 获取用户信息
+        if (Objects.isNull(accountUserConnectionDTO.getUserId())) {
+            return UserBaseDTO.builder().build();
+        }
+        // 4. 通过用户 ID 获取用户信息
+        return queryUserInfoById(UserBaseDTO.builder().id(accountUserConnectionDTO.getUserId()).build());
     }
 }

@@ -1,5 +1,6 @@
 package com.ranyk.authorization.api.user;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.ranyk.authorization.service.user.UserService;
 import com.ranyk.model.business.userinfo.dto.UserBaseDTO;
 import com.ranyk.model.business.userinfo.vo.UserBaseVO;
@@ -122,6 +123,16 @@ public class UserApi {
     @GetMapping
     public R<PageVO<List<UserBaseVO>>> queryUser(UserBaseDTO userBaseDTO) {
         return R.ok(userService.queryUser(userBaseDTO));
+    }
+
+    /**
+     * 查询当前登录用户信息
+     *
+     * @return 返回当前登录用户的基本详情信息,参见 {@link UserBaseVO}
+     */
+    @GetMapping("/current")
+    public R<UserBaseVO> getCurrentUser() {
+        return R.ok(BeanUtil.copyProperties(userService.getCurrentUser(), UserBaseVO.class));
     }
 
 }
