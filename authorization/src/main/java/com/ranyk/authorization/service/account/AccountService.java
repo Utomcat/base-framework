@@ -104,7 +104,7 @@ public class AccountService {
         Account saveEntity = Account.builder()
                 .userName(accountDTO.getUserName())
                 .password(DigestUtil.md5Hex(accountDTO.getPassword()))
-                .accountStatus(AccountStatusEnum.ENABLED.getCode())
+                .status(AccountStatusEnum.ENABLED.getCode())
                 .createTime(now)
                 .createId(StpUtil.getLoginIdAsLong())
                 .updateTime(now)
@@ -182,8 +182,8 @@ public class AccountService {
                 if (StrUtil.isNotEmpty(accountDTO.getPassword())) {
                     account.setPassword(DigestUtil.md5Hex(accountDTO.getPassword()));
                 }
-                if (Objects.nonNull(accountDTO.getAccountStatus())) {
-                    account.setAccountStatus(accountDTO.getAccountStatus());
+                if (Objects.nonNull(accountDTO.getStatus())) {
+                    account.setStatus(accountDTO.getStatus());
                 }
                 account.setUpdateId(StpUtil.getLoginIdAsLong());
                 account.setUpdateTime(LocalDateTime.now());
@@ -212,8 +212,8 @@ public class AccountService {
                 predicates.add(cb.like(root.get("userName"), "%" + accountDTO.getUserName() + "%"));
             }
             // 动态条件2：status不为空时，精确查询（对标wrapper.eq("status", status)）
-            if (Objects.nonNull(accountDTO.getAccountStatus())) {
-                predicates.add(cb.equal(root.get("accountStatus"), accountDTO.getAccountStatus()));
+            if (Objects.nonNull(accountDTO.getStatus())) {
+                predicates.add(cb.equal(root.get("accountStatus"), accountDTO.getStatus()));
             }
             // 动态条件3：id不为空时，精确查询（对标wrapper.eq("id", id)）
             if (Objects.nonNull(accountDTO.getId())) {
@@ -241,7 +241,7 @@ public class AccountService {
      */
     public AccountDTO queryLoginAccountByUserNameAndPassword(AccountDTO accountDTO) {
         // 通过传入的用户名和密码进行账户对象的查询, 当未查询到时, 返回一个新建的 账户(Account) 对象, 此对象没有数据 id
-        Account account = accountRepository.findByUserNameAndPasswordAndAccountStatusEquals(accountDTO.getUserName(), DigestUtil.md5Hex(accountDTO.getPassword()), AccountStatusEnum.ENABLED.getCode()).orElse(Account.builder().build());
+        Account account = accountRepository.findByUserNameAndPasswordAndStatusEquals(accountDTO.getUserName(), DigestUtil.md5Hex(accountDTO.getPassword()), AccountStatusEnum.ENABLED.getCode()).orElse(Account.builder().build());
         // 返回查询结果
         return BeanUtil.copyProperties(account, AccountDTO.class);
     }
