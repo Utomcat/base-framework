@@ -29,6 +29,14 @@ public class BaseDTO implements Serializable {
     // 以下是基础数据接收和传输对象公共属性字段
 
     /**
+     * 数据主键 ID
+     */
+    private Long id;
+    /**
+     * 数据备注
+     */
+    private String remark;
+    /**
      * 角色数据创建时间
      */
     private LocalDateTime createTime;
@@ -48,7 +56,7 @@ public class BaseDTO implements Serializable {
     // 以下是额外的数据公共字段
 
     /**
-     * 角色 ID 列表
+     * 数据主键 ID 列表
      */
     private List<Long> ids;
     /**
