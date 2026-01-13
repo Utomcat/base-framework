@@ -26,10 +26,6 @@ public class AccountDTO extends BaseDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = 6394345823746679769L;
     /**
-     * 账户数据主键 ID
-     */
-    private Long id;
-    /**
      * 账户登录账号
      */
     private String userName;
@@ -40,7 +36,7 @@ public class AccountDTO extends BaseDTO implements Serializable {
     /**
      * 登录账户状态: -2: 停用/注销; -1: 禁用; 0: 锁定; 1: 启用;
      */
-    private Integer accountStatus;
+    private Integer status;
     /**
      * 登录成功后的 SA-TOKEN 认证令牌 token 名称
      */
