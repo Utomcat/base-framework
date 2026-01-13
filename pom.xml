@@ -123,6 +123,8 @@
         <commons-collections4.version>4.5.0</commons-collections4.version>
         <!-- 项目依赖的 sa-token 框架版本 -->
         <sa-token.version>1.44.0</sa-token.version>
+        <!-- 项目依赖的 slf4j-api 版本 -->
+        <slf4j-api.version>2.0.7</slf4j-api.version>
         <!-- 项目 maven 源代码编译 jdk 版本 -->
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <!-- 项目 maven 目标代码编译 jdk 版本 -->
@@ -220,6 +222,13 @@
                 <groupId>cn.dev33</groupId>
                 <artifactId>sa-token-spring-aop</artifactId>
                 <version>${sa-token.version}</version>
+            </dependency>
+
+            <!-- SLF4J日志门面 -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j-api.version}</version>
             </dependency>
 
             <!-- 核心模块 -->
