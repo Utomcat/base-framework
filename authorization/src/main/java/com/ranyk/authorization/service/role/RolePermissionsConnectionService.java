@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * CLASS_NAME: RolePermissionsConnectionService.java
@@ -74,7 +75,7 @@ public class RolePermissionsConnectionService {
         // 3. 获取当前系统时间
         LocalDateTime now = LocalDateTime.now();
         // 4. 构建角色权限关联关系数据库对象集合
-        List<RolePermissionConnection> needSaveRolePermissionsConnectionList = needSaveRolePermissionsList.stream().map(rolePermissionConnectionDTO -> RolePermissionConnection.builder().roleId(rolePermissionConnectionDTO.getRoleId()).permissionId(rolePermissionConnectionDTO.getPermissionId()).createId(currentUserId).createTime(now).updateId(currentUserId).updateTime(now).build()).toList();
+        List<RolePermissionConnection> needSaveRolePermissionsConnectionList = needSaveRolePermissionsList.stream().map(rolePermissionConnectionDTO -> RolePermissionConnection.builder().roleId(rolePermissionConnectionDTO.getRoleId()).permissionId(rolePermissionConnectionDTO.getPermissionId()).createId(currentUserId).createTime(now).updateId(currentUserId).updateTime(now).build()).collect(Collectors.toList());
         // 5. 批量保存角色权限关联关系信息
         List<RolePermissionConnection> rolePermissionConnections = rolePermissionsConnectionRepository.saveAllAndFlush(needSaveRolePermissionsConnectionList);
         if (!Objects.equals(rolePermissionConnections.size(), needSaveRolePermissionsConnectionList.size())) {
