@@ -27,10 +27,6 @@ public class RolePermissionConnectionDTO extends BaseDTO implements Serializable
     private static final long serialVersionUID = -4433425073735553667L;
 
     /**
-     * 主键 ID
-     */
-    private Long id;
-    /**
      * 角色信息数据 ID
      */
     private Long roleId;
