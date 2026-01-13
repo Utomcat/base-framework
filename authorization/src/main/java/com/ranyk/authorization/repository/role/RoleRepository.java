@@ -29,20 +29,20 @@ public interface RoleRepository extends JpaRepository<Role, Long>, CrudRepositor
      * @param roleCodeList 角色代码列表
      * @return 返回是否已存在对应的角色代码数据, Boolean 值, true: 已存在; false: 不存在;
      */
-    Boolean existsByRoleCodeIn(List<String> roleCodeList);
+    Boolean existsByCodeIn(List<String> roleCodeList);
 
     /**
      * 通过角色 ID 列表更新角色状态
      *
      * @param ids        角色 ID 列表
-     * @param roleStatus 角色状态
+     * @param status     角色状态
      * @param updateId   更新账户 ID
      * @param updateTime 更新时间
      * @return 返回更新角色状态数量
      */
     @Modifying
-    @Query("update Role r set r.roleStatus = :roleStatus, r.updateId = :updateId, r.updateTime = r.updateTime where r.id in :ids and r.roleStatus != -1")
-    Integer updateRoleStatusByIds(@Param("ids") List<Long> ids, @Param("roleStatus") Integer roleStatus, @Param("updateId") Long updateId, @Param("updateTime") LocalDateTime updateTime);
+    @Query("update Role r set r.status = :status, r.updateId = :updateId, r.updateTime = r.updateTime where r.id in :ids and r.status != -1")
+    Integer updateRoleStatusByIds(@Param("ids") List<Long> ids, @Param("status") Integer status, @Param("updateId") Long updateId, @Param("updateTime") LocalDateTime updateTime);
 
     /**
      * 通过角色代码列表和角色 ID 列表查询是否已存在对应的角色代码数据
@@ -51,5 +51,5 @@ public interface RoleRepository extends JpaRepository<Role, Long>, CrudRepositor
      * @param idList       角色 ID 列表
      * @return 存在返回 true, 不存在返回 false
      */
-    Boolean existsByRoleCodeInAndIdNotInAndRoleStatusEquals(List<String> roleCodeList, List<Long> idList, Integer roleStatus);
+    Boolean existsByCodeInAndIdNotInAndStatusEquals(List<String> roleCodeList, List<Long> idList, Integer roleStatus);
 }

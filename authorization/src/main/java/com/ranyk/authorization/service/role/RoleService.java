@@ -130,9 +130,9 @@ public class RoleService {
             throw new ServiceException("no.data.need.create");
         }
         // 3. 判断当前传入的角色中是否存在角色代码已存在于数据库中
-        List<String> roleCodeList = roleDTOList.stream().map(RoleDTO::getRoleCode).filter(StrUtil::isBlank).toList();
+        List<String> roleCodeList = roleDTOList.stream().map(RoleDTO::getCode).filter(StrUtil::isBlank).toList();
         // 4. 执行查询数据是否存在
-        if (roleRepository.existsByRoleCodeIn(roleCodeList)) {
+        if (roleRepository.existsByCodeIn(roleCodeList)) {
             throw new ServiceException("duplicate.data.found");
         }
         // 5. 获取当前登录账户的账户 ID
@@ -140,7 +140,7 @@ public class RoleService {
         // 6. 获取当前时间
         LocalDateTime now = LocalDateTime.now();
         // 7. 组装对应的角色信息数据
-        List<Role> needSaveRoleList = roleDTOList.stream().map(roleDTO -> Role.builder().roleName(roleDTO.getRoleName()).roleCode(roleDTO.getRoleCode()).roleStatus(RoleStatusEnum.NORMAL.getCode()).createId(loginId).updateId(loginId).createTime(now).updateTime(now).build()).toList();
+        List<Role> needSaveRoleList = roleDTOList.stream().map(roleDTO -> Role.builder().name(roleDTO.getName()).code(roleDTO.getCode()).status(RoleStatusEnum.NORMAL.getCode()).createId(loginId).updateId(loginId).createTime(now).updateTime(now).build()).collect(Collectors.toList());
         // 8. 保存角色信息
         List<Role> saveRoleList = roleRepository.saveAllAndFlush(needSaveRoleList);
         // 9. 判断是否保存一致
@@ -195,17 +195,17 @@ public class RoleService {
             if (Objects.isNull(roleDTO.getId())) {
                 throw new ServiceException("data.incomplete");
             } else {
-                if (StrUtil.isBlank(roleDTO.getRoleName())
-                        && StrUtil.isBlank(roleDTO.getRoleCode())
-                        && Objects.isNull(roleDTO.getRoleStatus())) {
+                if (StrUtil.isBlank(roleDTO.getName())
+                        && StrUtil.isBlank(roleDTO.getCode())
+                        && Objects.isNull(roleDTO.getStatus())) {
                     throw new ServiceException("data.incomplete");
                 }
             }
         });
         // 4. 判断是否已经存在指定的角色代码存在,但是数据ID 不是当前的数据 ID
-        List<String> roleCodeList = roleDTOList.stream().map(RoleDTO::getRoleCode).filter(StrUtil::isNotBlank).toList();
+        List<String> roleCodeList = roleDTOList.stream().map(RoleDTO::getCode).filter(StrUtil::isNotBlank).toList();
         List<Long> idList = roleDTOList.stream().map(RoleDTO::getId).filter(Objects::nonNull).toList();
-        if (roleRepository.existsByRoleCodeInAndIdNotInAndRoleStatusEquals(roleCodeList, idList, RoleStatusEnum.NORMAL.getCode())) {
+        if (roleRepository.existsByCodeInAndIdNotInAndStatusEquals(roleCodeList, idList, RoleStatusEnum.NORMAL.getCode())) {
             throw new ServiceException("duplicate.data.found");
         }
         // 5. 获取当前登录账户的账户 ID
@@ -223,14 +223,14 @@ public class RoleService {
         // 9. 遍历对应的角色数据 List 集合, 组装对应的角色信息
         roleList.forEach(role -> {
             RoleDTO roleDTO = needSaveRoleMap.get(role.getId());
-            if (StrUtil.isNotBlank(roleDTO.getRoleName())) {
-                role.setRoleName(roleDTO.getRoleName());
+            if (StrUtil.isNotBlank(roleDTO.getName())) {
+                role.setName(roleDTO.getName());
             }
-            if (StrUtil.isNotBlank(roleDTO.getRoleCode())) {
-                role.setRoleCode(roleDTO.getRoleCode());
+            if (StrUtil.isNotBlank(roleDTO.getCode())) {
+                role.setCode(roleDTO.getCode());
             }
-            if (Objects.nonNull(roleDTO.getRoleStatus())) {
-                role.setRoleStatus(roleDTO.getRoleStatus());
+            if (Objects.nonNull(roleDTO.getStatus())) {
+                role.setStatus(roleDTO.getStatus());
             }
             role.setUpdateId(loginId);
             role.setUpdateTime(now);
@@ -266,16 +266,16 @@ public class RoleService {
                 predicates.add(cb.equal(root.get("id"), roleDTO.getId()));
             }
             // 动态条件2：roleName不为空时，模糊查询（对标wrapper.like("roleName", roleName)）
-            if (StrUtil.isNotEmpty(roleDTO.getRoleName())) {
-                predicates.add(cb.like(root.get("roleName"), "%" + roleDTO.getRoleName() + "%"));
+            if (StrUtil.isNotEmpty(roleDTO.getName())) {
+                predicates.add(cb.like(root.get("roleName"), "%" + roleDTO.getName() + "%"));
             }
             // 动态条件3：roleCode不为空时，模糊查询（对标wrapper.like("roleCode", roleCode)）
-            if (StrUtil.isNotEmpty(roleDTO.getRoleCode())) {
-                predicates.add(cb.like(root.get("roleCode"), "%" + roleDTO.getRoleCode() + "%"));
+            if (StrUtil.isNotEmpty(roleDTO.getCode())) {
+                predicates.add(cb.like(root.get("roleCode"), "%" + roleDTO.getCode() + "%"));
             }
             // 动态条件4：roleStatus不为空时，精确查询（对标wrapper.eq("roleStatus", roleStatus)）
-            if (Objects.nonNull(roleDTO.getRoleStatus())) {
-                predicates.add(cb.equal(root.get("roleStatus"), roleDTO.getRoleStatus()));
+            if (Objects.nonNull(roleDTO.getStatus())) {
+                predicates.add(cb.equal(root.get("roleStatus"), roleDTO.getStatus()));
             }
             // 将所有条件拼接为AND关系（对标wrapper.and()），也可手动指定OR
             return cb.and(predicates.toArray(new Predicate[0]));
