@@ -26,10 +26,6 @@ public class UserBaseDTO extends BaseDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = -9219733037261827396L;
     /**
-     * 主键 ID
-     */
-    private Long id;
-    /**
      * 用户全名
      */
     private String userName;

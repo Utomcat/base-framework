@@ -1,11 +1,12 @@
 package com.ranyk.model.business.userinfo.entity;
 
+import com.ranyk.model.base.entity.Base;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 /**
  * CLASS_NAME: UserBase.java
@@ -18,22 +19,15 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
-@Builder
 @ToString
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "user_base_info")
-public class UserBase implements Serializable {
+public class UserBase extends Base implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 7593890464181872993L;
-    /**
-     * 主键 ID
-     */
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", nullable = false, columnDefinition = "BIGINT AUTO_INCREMENT COMMENT '主键 ID'")
-    private Long id;
     /**
      * 用户全名
      */
@@ -84,24 +78,4 @@ public class UserBase implements Serializable {
      */
     @Column(name = "user_status", nullable = false, columnDefinition = "TINYINT DEFAULT 1 COMMENT '用户状态: -1: 删除; 0: 无效; 1: 正常(默认);'")
     private Integer status;
-    /**
-     * 数据创建时间
-     */
-    @Column(name = "create_time", nullable = false, columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '数据创建时间'")
-    private LocalDateTime createTime;
-    /**
-     * 数据创建人 ID
-     */
-    @Column(name = "create_id", nullable = false, columnDefinition = "BIGINT DEFAULT 1 COMMENT '数据创建人 ID'")
-    private Long createId;
-    /**
-     * 数据更新时间
-     */
-    @Column(name = "update_time", nullable = false, columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '数据更新时间'")
-    private LocalDateTime updateTime;
-    /**
-     * 数据更新人 ID
-     */
-    @Column(name = "update_id", nullable = false, columnDefinition = "BIGINT DEFAULT 1 COMMENT '数据更新人 ID'")
-    private Long updateId;
 }
