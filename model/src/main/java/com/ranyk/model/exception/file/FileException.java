@@ -23,7 +23,7 @@ public class FileException extends BaseException {
      * @param code         错误码
      * @param args         错误码对应的参数
      */
-    public FileException(String code, Object[] args) {
+    public FileException(String code, Object... args) {
         super("file", code, args, null);
     }
 }
