@@ -27,12 +27,12 @@ public interface AccountRepository extends JpaRepository<Account, Long>, CrudRep
     /**
      * 通过账户名和密码查询有效的账户信息
      *
-     * @param userName      用户名
-     * @param password      密码
-     * @param accountStatus 账户状态
+     * @param userName 用户名
+     * @param password 密码
+     * @param status   账户状态
      * @return 用户信息
      */
-    Optional<Account> findByUserNameAndPasswordAndAccountStatusEquals(String userName, String password, Integer accountStatus);
+    Optional<Account> findByUserNameAndPasswordAndStatusEquals(String userName, String password, Integer status);
 
     /**
      * 查询是否存在一条指定账户名的数据
@@ -59,6 +59,6 @@ public interface AccountRepository extends JpaRepository<Account, Long>, CrudRep
      * @return 返回注销的账户数量
      */
     @Modifying
-    @Query("UPDATE Account a SET a.accountStatus = :newStatus, a.updateId = :updateId, a.updateTime = :updateTime WHERE a.id IN :ids AND a.accountStatus != -2")
-    int batchDeregistrationAccountStatusByIds(@Param("ids") List<Long> ids, @Param("newStatus") Integer newStatus, @Param("updateId") Long updateId, @Param("updateTime")LocalDateTime updateTime);
+    @Query("UPDATE Account a SET a.status = :newStatus, a.updateId = :updateId, a.updateTime = :updateTime WHERE a.id IN :ids AND a.status != -2")
+    int batchDeregistrationAccountStatusByIds(@Param("ids") List<Long> ids, @Param("newStatus") Integer newStatus, @Param("updateId") Long updateId, @Param("updateTime") LocalDateTime updateTime);
 }
