@@ -27,10 +27,6 @@ public class AccountRoleConnectionDTO extends BaseDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = 8986390793639813867L;
     /**
-     * 主键 ID
-     */
-    private Long id;
-    /**
      * 账户信息数据 ID
      */
     private Long accountId;
