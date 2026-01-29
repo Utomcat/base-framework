@@ -73,7 +73,7 @@ public class UserService {
      * @param userBaseDTOList 新增用户信息 List 集合,单个数据参见 {@link UserBaseDTO}
      */
     @Transactional(rollbackFor = Exception.class)
-    public void addUser(List<UserBaseDTO> userBaseDTOList) {
+    public List<UserBaseDTO> addUser(List<UserBaseDTO> userBaseDTOList) {
         // 1. 判断当前用户是否有权限新增用户信息
         if (!StpUtil.hasPermission(AccountPermissionEnum.ADD_USER_INFO.getCode())) {
             throw new UserException("no.create.permission");
@@ -88,10 +88,17 @@ public class UserService {
         LocalDateTime now = LocalDateTime.now();
         // 5. 批量处理用户数据 => 对没有值的数据进行默认值填充,同时设置数据的公共属性(数据创建人、数据创建时间、数据更新人、数据更新时间)
         userBaseDTOList.forEach(userBaseDTO -> {
+            if (Objects.equals(userBaseDTO.getId(), 0L)){
+                userBaseDTO.setId(null);
+            }
+            // 当录入的 姓氏 和 名字 均为空, 则设置用户全名为 -
             if (StrUtil.isBlank(userBaseDTO.getFirstName()) && StrUtil.isBlank(userBaseDTO.getLastName())) {
                 userBaseDTO.setUserName(SymbolEnum.DASH_EN.getCode());
             } else {
-                userBaseDTO.setUserName(userBaseDTO.getLastName() + userBaseDTO.getFirstName());
+                // 当未传入用户的全名,则自动设置用户全名为 用户姓氏 + 用户名字
+                if (StrUtil.isBlank(userBaseDTO.getUserName())){
+                    userBaseDTO.setUserName(userBaseDTO.getLastName() + userBaseDTO.getFirstName());
+                }
             }
             if (StrUtil.isBlank(userBaseDTO.getFirstName())) {
                 userBaseDTO.setFirstName(SymbolEnum.DASH_EN.getCode());
@@ -131,6 +138,7 @@ public class UserService {
         }
         // 8. 输出保存成功日志
         log.info("新增用户成功,新增用户数据为 {}", userBaseList.size());
+        return BeanUtil.copyToList(userBaseList, UserBaseDTO.class);
     }
 
     /**
@@ -166,7 +174,7 @@ public class UserService {
             throw new UserException("no.update.permission");
         }
         // 2. 判断是否存在需要编辑的用户数据
-        if (Objects.isNull(userBaseDTOList) || userBaseDTOList.isEmpty()) {
+        if (Objects.isNull(userBaseDTOList) || userBaseDTOList.isEmpty() || userBaseDTOList.stream().allMatch(Objects::isNull)) {
             throw new ServiceException("no.data.need.update");
         }
         // 3. 获取当前登录用户的用户 ID
@@ -255,7 +263,7 @@ public class UserService {
                 predicates.add(cb.like(root.get("nickName"), "%" + userBaseDTO.getNickName() + "%"));
             }
             // 动态条件5：sex不为空时，精确查询（对标wrapper.eq("sex", sex)）
-            if (Objects.nonNull(userBaseDTO.getSex())) {
+            if (Objects.nonNull(userBaseDTO.getSex()) && userBaseDTO.getSex() >= 0) {
                 predicates.add(cb.equal(root.get("sex"), userBaseDTO.getSex()));
             }
             // 动态条件6：fixedLinePhone不为空时，模糊查询（对标wrapper.like("fixedLinePhone", fixedLinePhone)）
@@ -271,7 +279,7 @@ public class UserService {
                 predicates.add(cb.like(root.get("email"), "%" + userBaseDTO.getEmail() + "%"));
             }
             // 动态条件9：status不为空时，精确查询（对标wrapper.eq("status", status)）
-            if (Objects.nonNull(userBaseDTO.getStatus())) {
+            if (Objects.nonNull(userBaseDTO.getStatus()) && userBaseDTO.getStatus() > -2) {
                 predicates.add(cb.equal(root.get("status"), userBaseDTO.getStatus()));
             }
             // 动态条件10：id不为空时，精确查询（对标wrapper.eq("id", id)）

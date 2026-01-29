@@ -85,9 +85,8 @@ public class UserApi {
      * @return 新增用户结果
      */
     @PostMapping
-    public R<String> addUser(@RequestBody List<UserBaseDTO> userBaseDTOList) {
-        userService.addUser(userBaseDTOList);
-        return R.ok("新增用户成功!");
+    public R<List<UserBaseVO>> addUser(@RequestBody List<UserBaseDTO> userBaseDTOList) {
+        return R.ok(BeanUtil.copyToList(userService.addUser(userBaseDTOList), UserBaseVO.class));
     }
 
     /**
