@@ -31,9 +31,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * CLASS_NAME: LoginAccountService.java
@@ -80,9 +78,10 @@ public class AccountService {
      * 新增系统登录账户信息
      *
      * @param accountDTO 新增系统登录账户信息封装对象, {@link AccountDTO}
+     * @return 返回新增的账户信息数据对象 {@link AccountDTO}, 注意该返回对象 和 入参对象是两个对象,故不一样
      */
     @Transactional(rollbackFor = Exception.class)
-    public void addLoginAccount(AccountDTO accountDTO) {
+    public AccountDTO addLoginAccount(AccountDTO accountDTO) {
         // 1. 判断当前登录账户是否存在新增系统账户权限
         if (!StpUtil.hasPermission(AccountPermissionEnum.ADD_ACCOUNT.getCode())) {
             // 2. 不拥有权限则直接抛出异常
@@ -111,7 +110,10 @@ public class AccountService {
                 .updateId(StpUtil.getLoginIdAsLong())
                 .build();
         // 6. 保存账户信息到数据库
-        accountRepository.save(saveEntity);
+        Account saveResult = accountRepository.save(saveEntity);
+        AccountDTO saveResultDTO = BeanUtil.copyProperties(saveResult, AccountDTO.class);
+        saveResultDTO.setPassword("");
+        return saveResultDTO;
     }
 
     /**
@@ -296,5 +298,56 @@ public class AccountService {
         }
         AccountUserConnectionDTO accountUserConnectionDTO = accountUserConnectionService.queryUserInfoIdByAccountId(AccountUserConnectionDTO.builder().accountId(accountDTO.getId()).build());
         return AccountDTO.builder().userInfoId(accountUserConnectionDTO.getUserId()).build();
+    }
+
+    /**
+     * 通过用户 ID 查询对应用户绑定的账户信息
+     *
+     * @param accountDTO 查询条件封装对象, 此处传入的参数为 {@link AccountDTO#getUserInfoId()} 属性
+     * @return 返回该用户绑定的账号信息封装对象 {@link AccountVO}
+     */
+    public AccountDTO queryAccountInfoByUserInfoId(AccountDTO accountDTO) {
+        // 获取当前传入的用户信息 ID
+        Long userInfoId = accountDTO.getUserInfoId();
+        if (Objects.isNull(userInfoId)){
+            throw new ServiceException("data.incomplete");
+        }
+        // 根据传入的用户信息 ID 调用账户和用户关联关系表,查询对应的账户ID
+        AccountUserConnectionDTO accountUserConnectionDTO = accountUserConnectionService.queryAccountIdByUserInfoId(AccountUserConnectionDTO.builder().userId(userInfoId).build());
+        if (Objects.isNull(accountUserConnectionDTO) || Objects.isNull(accountUserConnectionDTO.getAccountId())){
+            return AccountDTO.builder().build();
+        }
+        // 通过查询出的账户ID 查询对应的账户信息, 返回对应的查询结果
+        Account account = accountRepository.findById(accountUserConnectionDTO.getAccountId()).orElse(Account.builder().build());
+        if (Objects.isNull(account) || Objects.isNull(account.getId())){
+            return AccountDTO.builder().build();
+        }
+        // 将其查询结果转换为 DTO 数据传输对象
+        return BeanUtil.copyProperties(account, AccountDTO.class);
+    }
+
+    /**
+     * 查询未绑定用户信息的账户信息
+     *
+     * @return 返回查询结果 List 集合, 单个参见 {@link AccountVO}
+     */
+    public PageVO<List<AccountVO>> queryNotBoundAccount() {
+        // 获取是否拥有查询数据的权限
+        if (!StpUtil.hasPermission(AccountPermissionEnum.QUERY_ACCOUNT.getCode())) {
+            throw new UserException("no.view.permission");
+        }
+        // 获取已绑定的账户 ID
+        List<Long> boundAccountIdList = accountUserConnectionService.queryBoundAccountId();
+        // 查询未绑定的账户信息
+        List<Account> accountList = Optional.of(accountRepository.findByIdNotIn(boundAccountIdList)).orElse(Collections.emptyList());
+        // 清除查询出的账户信息的密码
+        accountList.forEach(account -> account.setPassword(""));
+        // 构造返回结果对象
+        return PageVO.<List<AccountVO>>builder()
+                .data(BeanUtil.copyToList(accountList, AccountVO.class))
+                .pageNum(1)
+                .totalPage(1)
+                .total(Long.parseLong(String.valueOf(accountList.size())))
+                .build();
     }
 }

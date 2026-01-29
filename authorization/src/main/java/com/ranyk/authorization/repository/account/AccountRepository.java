@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -61,4 +62,12 @@ public interface AccountRepository extends JpaRepository<Account, Long>, CrudRep
     @Modifying
     @Query("UPDATE Account a SET a.status = :newStatus, a.updateId = :updateId, a.updateTime = :updateTime WHERE a.id IN :ids AND a.status != -2")
     int batchDeregistrationAccountStatusByIds(@Param("ids") List<Long> ids, @Param("newStatus") Integer newStatus, @Param("updateId") Long updateId, @Param("updateTime") LocalDateTime updateTime);
+
+    /**
+     * 查询账户信息 - 不在指定的账户信息 ID List 集合中
+     *
+     * @param ids 需要排除的账户信息 ID List 集合
+     * @return 返回已排除的账户信息 List 集合, 单个账户信息参见 {@link Account}
+     */
+    List<Account> findByIdNotIn(Collection<Long> ids);
 }
