@@ -26,4 +26,14 @@ public class ApplicationEntranceTest {
         // 对 123456 进行加密的结果是  e10adc3949ba59abbe56e057f20f883e
         log.info("对 str {} 字符串进行 MD5 方法进行加密的结果是 {}", str, DigestUtil.md5Hex(str));
     }
+
+    /**
+     * 测试 Integer 类型的大小是否和 int 一致
+     */
+    @Test
+    void test1(){
+        Integer a = 0;
+        Integer b = Integer.parseInt("5");
+        log.info("a < b = {}", a < b);
+    }
 }
