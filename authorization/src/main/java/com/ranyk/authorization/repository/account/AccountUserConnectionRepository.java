@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -35,4 +36,12 @@ public interface AccountUserConnectionRepository extends JpaRepository<AccountUs
      * @return 账户用户关联关系数据映射实体对象 {@link  AccountUserConnection}
      */
     AccountUserConnection findAccountUserConnectionByAccountIdEquals(Long accountId);
+
+    /**
+     * 依据用户ID 查询账户用户关联关系数据信息
+     *
+     * @param userId - 用户ID
+     * @return 账户用户关联关系数据映射实体对象 {@link AccountUserConnection}
+     */
+    Optional<AccountUserConnection> findAccountUserConnectionByUserId(Long userId);
 }

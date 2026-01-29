@@ -12,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -60,6 +62,8 @@ public class AccountUserConnectionService {
         // 3. 判断 accountUserConnectionDTOList 中是否存在多个 accountId 或 多个 userId
         var accountIdSet = new HashSet<Long>();
         var userIdSet = new HashSet<Long>();
+        LocalDateTime now = LocalDateTime.now();
+        Long operatorId = StpUtil.getLoginIdAsLong();
         for (var connection : accountUserConnectionDTOList) {
             if (Objects.isNull(connection.getAccountId()) || Objects.isNull(connection.getUserId())) {
                 log.error("{} 数据为空!!!!", Objects.isNull(connection.getAccountId()) ? "账户 ID" : "用户 ID");
@@ -73,6 +77,10 @@ public class AccountUserConnectionService {
                 log.error("用户ID {} 重复!!!", connection.getUserId());
                 throw new ServiceException("duplicate.data.found");
             }
+            connection.setCreateTime(now);
+            connection.setCreateId(operatorId);
+            connection.setUpdateTime(now);
+            connection.setUpdateId(operatorId);
         }
         // 4. 判断是否存在入参账户和用户已经绑定的情况
         if (accountUserConnectionRepository.existsByAccountIdInOrUserIdIn(accountIdSet, userIdSet)) {
@@ -94,11 +102,41 @@ public class AccountUserConnectionService {
      * @param accountUserConnectionDTO 账户用户关联关系数据接受对象, 账户 ID 为 {@link AccountUserConnectionDTO#getAccountId()}
      * @return 账户用户关联关系数据接受对象, 用户 ID 为 {@link AccountUserConnectionDTO#getUserId()}
      */
-    public AccountUserConnectionDTO queryUserInfoIdByAccountId(AccountUserConnectionDTO accountUserConnectionDTO){
-        if (Objects.isNull(accountUserConnectionDTO.getAccountId())){
+    public AccountUserConnectionDTO queryUserInfoIdByAccountId(AccountUserConnectionDTO accountUserConnectionDTO) {
+        if (Objects.isNull(accountUserConnectionDTO.getAccountId())) {
             return AccountUserConnectionDTO.builder().build();
         }
         AccountUserConnection accountUserConnection = accountUserConnectionRepository.findAccountUserConnectionByAccountIdEquals(accountUserConnectionDTO.getAccountId());
         return BeanUtil.copyProperties(accountUserConnection, AccountUserConnectionDTO.class);
+    }
+
+    /**
+     * 依据用户ID 查询账户和用户信息关联信息
+     *
+     * @param accountUserConnectionDTO 账户用户关联关系数据接收对象, 用户ID 为 {@link AccountUserConnectionDTO#getUserId()}
+     * @return 账户用户关联关系数据接收对象, 账户ID 为 {@link AccountUserConnectionDTO#getAccountId()}
+     */
+    public AccountUserConnectionDTO queryAccountIdByUserInfoId(AccountUserConnectionDTO accountUserConnectionDTO) {
+        if (Objects.isNull(accountUserConnectionDTO.getUserId())) {
+            return AccountUserConnectionDTO.builder().build();
+        }
+        AccountUserConnection accountUserConnection = accountUserConnectionRepository.findAccountUserConnectionByUserId(accountUserConnectionDTO.getUserId()).orElse(AccountUserConnection.builder().build());
+        return BeanUtil.copyProperties(accountUserConnection, AccountUserConnectionDTO.class);
+    }
+
+    /**
+     * 查询当前已经绑定过的账户 ID List 集合
+     *
+     * @return 返回当前已经绑定过的账户 ID List 集合
+     */
+    public List<Long> queryBoundAccountId() {
+        // 查询当前已经绑定的账户 ID
+        List<AccountUserConnection> boundAccountList = accountUserConnectionRepository.findAll();
+        // 如果未查询出绑定的账户 ID , 则直接返回一个空 List 集合
+        if (boundAccountList.isEmpty()) {
+            return Collections.emptyList();
+        }
+        // 存在对应的绑定账户 ID , 则返回对应的账户 ID List 集合
+        return boundAccountList.stream().map(AccountUserConnection::getAccountId).toList();
     }
 }
