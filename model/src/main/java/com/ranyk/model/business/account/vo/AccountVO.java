@@ -4,7 +4,6 @@ import lombok.*;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 /**
  * CLASS_NAME: AccountVO.java
@@ -38,21 +37,6 @@ public class AccountVO implements Serializable {
     /**
      * 登录账户状态: -2: 停用/注销; -1: 禁用; 0: 锁定; 1: 启用;
      */
-    private byte accountStatus;
-    /**
-     * 账户数据创建时间
-     */
-    private LocalDateTime createTime;
-    /**
-     * 账户数据创建人 ID
-     */
-    private Long createId;
-    /**
-     * 账户数据更新时间
-     */
-    private LocalDateTime updateTime;
-    /**
-     * 账户数据更新人 ID
-     */
-    private Long updateId;
+    private Integer status;
+
 }
