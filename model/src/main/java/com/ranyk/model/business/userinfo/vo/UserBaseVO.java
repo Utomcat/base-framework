@@ -62,4 +62,12 @@ public class UserBaseVO implements Serializable {
      * 用户头像地址
      */
     private String avatar;
+    /**
+     * 用户备注
+     */
+    private String remark;
+    /**
+     * 用户状态: -1: 删除; 0: 无效; 1: 正常(默认);
+     */
+    private Integer status;
 }
