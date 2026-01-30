@@ -140,7 +140,7 @@ public class RoleService {
         // 6. 获取当前时间
         LocalDateTime now = LocalDateTime.now();
         // 7. 组装对应的角色信息数据
-        List<Role> needSaveRoleList = roleDTOList.stream().map(roleDTO -> Role.builder().name(roleDTO.getName()).code(roleDTO.getCode()).status(RoleStatusEnum.NORMAL.getCode()).createId(loginId).updateId(loginId).createTime(now).updateTime(now).build()).collect(Collectors.toList());
+        List<Role> needSaveRoleList = roleDTOList.stream().map(roleDTO -> Role.builder().name(roleDTO.getName()).code(roleDTO.getCode()).status(Objects.isNull(roleDTO.getStatus()) ? RoleStatusEnum.NORMAL.getCode() : roleDTO.getStatus()).remark(roleDTO.getRemark()).createId(loginId).updateId(loginId).createTime(now).updateTime(now).build()).collect(Collectors.toList());
         // 8. 保存角色信息
         List<Role> saveRoleList = roleRepository.saveAllAndFlush(needSaveRoleList);
         // 9. 判断是否保存一致
@@ -232,6 +232,9 @@ public class RoleService {
             if (Objects.nonNull(roleDTO.getStatus())) {
                 role.setStatus(roleDTO.getStatus());
             }
+            if (StrUtil.isNotBlank(roleDTO.getRemark())){
+                role.setRemark(roleDTO.getRemark());
+            }
             role.setUpdateId(loginId);
             role.setUpdateTime(now);
         });
@@ -265,17 +268,21 @@ public class RoleService {
             if (Objects.nonNull(roleDTO.getId())) {
                 predicates.add(cb.equal(root.get("id"), roleDTO.getId()));
             }
-            // 动态条件2：roleName不为空时，模糊查询（对标wrapper.like("roleName", roleName)）
+            // 动态条件2：roleName不为空时，模糊查询（对标wrapper.like("name", name)）
             if (StrUtil.isNotEmpty(roleDTO.getName())) {
-                predicates.add(cb.like(root.get("roleName"), "%" + roleDTO.getName() + "%"));
+                predicates.add(cb.like(root.get("name"), "%" + roleDTO.getName() + "%"));
             }
-            // 动态条件3：roleCode不为空时，模糊查询（对标wrapper.like("roleCode", roleCode)）
+            // 动态条件3：roleCode不为空时，模糊查询（对标wrapper.like("code", code)）
             if (StrUtil.isNotEmpty(roleDTO.getCode())) {
-                predicates.add(cb.like(root.get("roleCode"), "%" + roleDTO.getCode() + "%"));
+                predicates.add(cb.like(root.get("code"), "%" + roleDTO.getCode() + "%"));
             }
-            // 动态条件4：roleStatus不为空时，精确查询（对标wrapper.eq("roleStatus", roleStatus)）
+            // 动态条件4：roleStatus不为空时，精确查询（对标wrapper.eq("status", status)）
             if (Objects.nonNull(roleDTO.getStatus())) {
-                predicates.add(cb.equal(root.get("roleStatus"), roleDTO.getStatus()));
+                predicates.add(cb.equal(root.get("status"), roleDTO.getStatus()));
+            }
+            // 动态条件5: remark不为空时，模糊查询（对标wrapper.like("remark", remark)）
+            if (StrUtil.isNotEmpty(roleDTO.getRemark())) {
+                predicates.add(cb.like(root.get("remark"), "%" + roleDTO.getRemark() + "%"));
             }
             // 将所有条件拼接为AND关系（对标wrapper.and()），也可手动指定OR
             return cb.and(predicates.toArray(new Predicate[0]));
