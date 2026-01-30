@@ -38,4 +38,8 @@ public class RoleVO implements Serializable {
      * 角色状态: 1: 正常(默认); -1: 删除/停用;
      */
     private byte status;
+    /**
+     * 角色备注
+     */
+    private String remark;
 }
