@@ -3,7 +3,6 @@ package com.ranyk.authorization.api.account;
 import cn.hutool.core.bean.BeanUtil;
 import com.ranyk.authorization.service.account.AccountService;
 import com.ranyk.model.business.account.dto.AccountDTO;
-import com.ranyk.model.business.account.dto.AccountRoleConnectionDTO;
 import com.ranyk.model.business.account.dto.AccountUserConnectionDTO;
 import com.ranyk.model.business.account.vo.AccountVO;
 import com.ranyk.model.page.vo.PageVO;
@@ -11,6 +10,7 @@ import com.ranyk.model.response.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -101,7 +101,7 @@ public class AccountApi {
      */
     @PostMapping
     public R<AccountVO> addLoginAccount(@RequestBody AccountDTO accountDTO) {
-        return R.ok(BeanUtil.copyProperties(accountService.addLoginAccount(accountDTO),  AccountVO.class));
+        return R.ok(BeanUtil.copyProperties(accountService.addLoginAccount(accountDTO), AccountVO.class));
     }
 
     /**
@@ -146,8 +146,18 @@ public class AccountApi {
      * @return 返回该用户绑定的账号信息封装对象 {@link AccountVO}
      */
     @GetMapping("/query/account/by/userInfoId")
-    public R<AccountVO> queryAccountInfoByUserInfoId(AccountDTO accountDTO){
+    public R<AccountVO> queryAccountInfoByUserInfoId(AccountDTO accountDTO) {
         return R.ok(BeanUtil.copyProperties(accountService.queryAccountInfoByUserInfoId(accountDTO), AccountVO.class));
+    }
+
+    /**
+     * 查询未绑定用户信息的账户信息 List 集合
+     *
+     * @return 查询账户信息结果 List 集合, 单个参见 {@link AccountVO}
+     */
+    @GetMapping("/not/bound")
+    public R<PageVO<List<AccountVO>>> queryNotBoundAccount() {
+        return R.ok(accountService.queryNotBoundAccount());
     }
 
     /**
@@ -163,24 +173,25 @@ public class AccountApi {
     }
 
     /**
-     * 为账户分配角色
+     * 查询所有有效的账户信息 List 集合
      *
-     * @param accountRoleConnectionDTOList 账户角色信息接受对象 List 集合, 单个账户角色信息为 {@link AccountRoleConnectionDTO}
-     * @return 为账户分配角色结果
+     * @param accountDTO 查询条件封装对象, 此处传入的参数为 {@link AccountDTO#getStatus()} 属性
+     * @return 返回查询到的有效账户信息 List 集合, 单个参见 {@link AccountVO}
      */
-    @PostMapping("/role/connection")
-    public R<String> allocationAccountRoleConnection(@RequestBody List<AccountRoleConnectionDTO> accountRoleConnectionDTOList) {
-        accountService.allocationAccountRoleConnection(accountRoleConnectionDTOList);
-        return R.ok("为账户分配角色成功!");
+    @GetMapping("/query/all/effective/account")
+    public R<List<AccountVO>> queryAllEffectiveAccount(AccountDTO accountDTO) {
+        return R.ok(BeanUtil.copyToList(accountService.queryAllEffectiveAccount(accountDTO), AccountVO.class));
     }
 
     /**
-     * 查询为绑定的账户信息 List 集合
+     * 查询账户已绑定的角色信息的账户 ID List 集合
      *
-     * @return 查询账户信息结果 List 集合, 单个参见 {@link AccountVO}
+     * @param accountDTO 查询条件封装对象, 此处传入的参数为 {@link AccountDTO#getRoleId()} 属性
+     * @return 返回查询到的已绑定指定角色的账户信息 ID List 集合, 此处返回 String 类型是为了防止前端浏览器对 Long 类型的数据丢失处理
      */
-    @GetMapping("/not/bound")
-    public R<PageVO<List<AccountVO>>> queryNotBoundAccount() {
-        return R.ok(accountService.queryNotBoundAccount());
+    @GetMapping("/query/connection/role/of/account/id")
+    public R<List<String>> queryConnectionRoleOfAccountId(AccountDTO accountDTO) {
+        AccountDTO queryResult = accountService.queryConnectionRoleOfAccountId(accountDTO);
+        return R.ok(queryResult.getIds().isEmpty() ? Collections.emptyList() : queryResult.getIds().stream().map(String::valueOf).toList());
     }
 }
