@@ -52,4 +52,12 @@ public interface RoleRepository extends JpaRepository<Role, Long>, CrudRepositor
      * @return 存在返回 true, 不存在返回 false
      */
     Boolean existsByCodeInAndIdNotInAndStatusEquals(List<String> roleCodeList, List<Long> idList, Integer roleStatus);
+
+    /**
+     * 查询角色信息 - 状态为指定的状态
+     *
+     * @param status 需要查询的角色状态
+     * @return 角色信息 List 集合, 单个角色信息参见 {@link Role}
+     */
+    List<Role> findByStatus(Integer status);
 }
