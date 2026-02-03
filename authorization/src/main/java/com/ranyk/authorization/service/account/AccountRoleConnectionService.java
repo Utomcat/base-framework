@@ -98,7 +98,7 @@ public class AccountRoleConnectionService {
     public void removeAccountRoleConnectionByRoleId(AccountRoleConnectionDTO accountRoleConnectionDTO) {
         // 1. 判断是否存在需要处理的数据
         if (Objects.isNull(accountRoleConnectionDTO) || Objects.isNull(accountRoleConnectionDTO.getRoleId())) {
-            log.error("{}不需要进行数据处理!", Objects.isNull(accountRoleConnectionDTO) ? "账户角色关联关系对象为空, " : "角色 ID 为空, ");
+            log.error("{} 不需进行账户角色关联关系删除逻辑!", Objects.isNull(accountRoleConnectionDTO) ? "账户角色关联关系对象为空," : "角色 ID 为空,");
             throw new ServiceException("no.data.need.delete");
         }
         // 2. 执行删除数据操作, 条件为指定的角色 ID
