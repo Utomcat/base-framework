@@ -324,7 +324,7 @@ public class AccountService {
     }
 
     /**
-     * 查询账户未绑定的角色信息的账户 List 集合
+     * 查询当前所有有效的账户 List 集合
      *
      * @param accountDTO 查询条件封装对象, 此处传入的参数为 {@link AccountDTO#getStatus()} 属性
      * @return 返回查询到的账户信息 List 集合, 单个参见 {@link AccountDTO}
@@ -339,7 +339,7 @@ public class AccountService {
     }
 
     /**
-     * 账户已绑定的角色信息的账户 List 集合
+     * 账户已绑定角色信息的账户 ID List 集合
      *
      * @param accountDTO 账户信息查询条件封装对象, 此处传入的参数为 {@link AccountDTO#getRoleId()} 属性
      * @return 返回查询到的已关联角色的账户信息 ID, 封装在 {@link AccountDTO#getIds()} 属性中
