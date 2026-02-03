@@ -1,15 +1,16 @@
 package com.ranyk.authorization.api.role;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import com.ranyk.authorization.service.role.RoleService;
 import com.ranyk.model.business.role.dto.RoleDTO;
-import com.ranyk.model.business.role.dto.RolePermissionConnectionDTO;
 import com.ranyk.model.business.role.vo.RoleVO;
 import com.ranyk.model.page.vo.PageVO;
 import com.ranyk.model.response.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -99,7 +100,7 @@ public class RoleApi {
     /**
      * 为角色分配账户
      *
-     * @param roleDTO 角色账户关联参数封装对象, 其中主要使用封装的 {@link RoleDTO#getId()} 和 {@link RoleDTO#getAccountIds()} 属性
+     * @param roleDTO 角色和账户关联的参数封装对象, 其中主要使用封装的 {@link RoleDTO#getId()} 和 {@link RoleDTO#getAccountIds()} 属性
      * @return 为角色分配账户结果
      */
     @PostMapping("/assigned/account")
@@ -109,14 +110,25 @@ public class RoleApi {
     }
 
     /**
-     * 授予角色权限
+     * 查询所有有效角色
      *
-     * @param rolePermissionConnectionDTOList 授予角色权限参数封装对象 List 集合, 单个角色权限信息为 {@link RolePermissionConnectionDTO} 角色权限信息对象
-     * @return 返回角色授权结果
+     * @param roleDTO 查询条件封装对象, 此处传入的参数为 {@link RoleDTO#getStatus()} 状态属性
+     * @return 返回查询到的角色信息 List 集合, 单个参见 {@link RoleVO}
      */
-    @PostMapping("/empower/permissions")
-    public R<String> empowerPermissions(@RequestBody List<RolePermissionConnectionDTO> rolePermissionConnectionDTOList){
-        roleService.empowerPermissions(rolePermissionConnectionDTOList);
-        return R.ok("授权权限成功!");
+    @GetMapping("/query/all/effective/role")
+    public R<List<RoleVO>> queryAllEffectiveRole(RoleDTO roleDTO){
+        return R.ok(BeanUtil.copyToList(roleService.queryAllEffectiveRole(roleDTO), RoleVO.class));
+    }
+
+    /**
+     * 查询角色已关联的权限信息的角色 ID List 集合
+     *
+     * @param roleDTO 查询条件封装对象, 此处传入的参数为 {@link RoleDTO#getId()} 角色 ID
+     * @return
+     */
+    @GetMapping("/query/connection/permission/of/role/id")
+    public R<List<String>> queryConnectionPermissionOfRoleId(RoleDTO roleDTO){
+        RoleDTO queryResult = roleService.queryConnectionPermissionOfRoleId(roleDTO);
+        return R.ok(CollUtil.isEmpty(queryResult.getIds()) ? Collections.emptyList() : queryResult.getIds().stream().map(String::valueOf).toList());
     }
 }
