@@ -10,7 +10,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -69,5 +68,21 @@ public interface AccountRepository extends JpaRepository<Account, Long>, CrudRep
      * @param ids 需要排除的账户信息 ID List 集合
      * @return 返回已排除的账户信息 List 集合, 单个账户信息参见 {@link Account}
      */
-    List<Account> findByIdNotIn(Collection<Long> ids);
+    List<Account> findByIdNotIn(List<Long> ids);
+
+    /**
+     * 查询账户信息 - 存在指定的账户信息 ID List 集合中
+     *
+     * @param ids 需要查询的账户信息 ID List 集合
+     * @return 批量查询的账户信息 List 集合, 单个账户信息参见 {@link Account}
+     */
+    List<Account> findByIdIn(List<Long> ids);
+
+    /**
+     * 查询账户信息 - 状态为指定的状态
+     *
+     * @param status 需要查询的账户状态
+     * @return 返回账户信息 List 集合, 单个账户信息参见 {@link Account}
+     */
+    List<Account> findByStatus(Integer status);
 }
