@@ -95,14 +95,30 @@ public class AccountRoleConnectionService {
      * @param accountRoleConnectionDTO 账户角色关联关系对象,当前主要使用的是 {@link AccountRoleConnectionDTO#getAccountIds()} 属性
      */
     @Transactional(rollbackFor = Exception.class)
-    public void removeAccountRoleConnectionByAccountId(AccountRoleConnectionDTO accountRoleConnectionDTO) {
+    public void removeAccountRoleConnectionByRoleId(AccountRoleConnectionDTO accountRoleConnectionDTO) {
         // 1. 判断是否存在需要处理的数据
-        if (CollUtil.isEmpty(accountRoleConnectionDTO.getAccountIds()) || accountRoleConnectionDTO.getAccountIds().isEmpty()) {
-            log.error("不存在需要处理的数据");
+        if (Objects.isNull(accountRoleConnectionDTO) || Objects.isNull(accountRoleConnectionDTO.getRoleId())) {
+            log.error("{}不需要进行数据处理!", Objects.isNull(accountRoleConnectionDTO) ? "账户角色关联关系对象为空, " : "角色 ID 为空, ");
             throw new ServiceException("no.data.need.delete");
         }
-        // 2. 执行删除操作
-        Long deleteCount = accountRoleConnectionRepository.deleteByAccountIdIn(accountRoleConnectionDTO.getAccountIds());
+        // 2. 执行删除数据操作, 条件为指定的角色 ID
+        Long deleteCount = accountRoleConnectionRepository.deleteByRoleIdEquals(accountRoleConnectionDTO.getRoleId());
         log.info("账户和角色关联关系删除成功, 删除的账户和角色关联关系数据量为: {}", deleteCount.intValue());
+    }
+
+    /**
+     * 通过角色 ID 查询已关联的账户 ID List 集合
+     *
+     * @param accountRoleConnectionDTO 账户角色关联关系对象,当前主要使用是 {@link AccountRoleConnectionDTO#getRoleIds()} 属性
+     * @return 返回已关联的账户 ID List 集合, 对应的存放属性为 {@link AccountRoleConnectionDTO#getAccountIds()}
+     */
+    public AccountRoleConnectionDTO queryAccountIdByRoleId(AccountRoleConnectionDTO accountRoleConnectionDTO) {
+        List<AccountRoleConnection> queryResult = Optional.of(accountRoleConnectionRepository.findAllByRoleIdIn(accountRoleConnectionDTO.getRoleIds())).orElse(Collections.emptyList());
+        if (CollUtil.isEmpty(queryResult)){
+            return AccountRoleConnectionDTO.builder().build();
+        }
+        else {
+            return AccountRoleConnectionDTO.builder().accountIds(queryResult.stream().map(AccountRoleConnection::getAccountId).toList()).build();
+        }
     }
 }
