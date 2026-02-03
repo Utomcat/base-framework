@@ -2,6 +2,7 @@ package com.ranyk.authorization.service.permissions;
 
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.ranyk.authorization.repository.permissions.PermissionRepository;
 import com.ranyk.authorization.service.account.AccountRoleConnectionService;
@@ -154,7 +155,7 @@ public class PermissionsService {
         }
         // 3. 判断当前新增的权限 code 是否当前系统已经存在
         if (permissionRepository.existsByCodeIn(permissionsDTOList.stream().map(PermissionsDTO::getCode).toList())) {
-            throw new ServiceException("duplicate.data.found", permissionsDTOList.stream().map(PermissionsDTO::getCode).toList());
+            throw new ServiceException("duplicate.data.found", "code "+permissionsDTOList.stream().map(PermissionsDTO::getCode).toList());
         }
         // 4. 获取当前用户 ID
         long loginId = StpUtil.getLoginIdAsLong();
@@ -168,14 +169,14 @@ public class PermissionsService {
             permission.setUpdateId(loginId);
             permission.setCreateTime(now);
             permission.setUpdateTime(now);
-            permission.setStatus(PermissionsStatusEnum.NORMAL.getCode());
+            permission.setStatus(Objects.isNull(permissionsDTO.getStatus()) ? PermissionsStatusEnum.NORMAL.getCode() : permissionsDTO.getStatus());
             return permission;
         }).toList();
         // 7. 保存权限信息
         List<Permission> permissions = permissionRepository.saveAllAndFlush(permissionList);
         // 8. 判断是否保存一致
         if (!Objects.equals(permissions.size(), permissionsDTOList.size())) {
-            log.error("新增权限信息失败, 新增权限数量为: {}", permissions.size());
+            log.error("新增权限信息失败, 需新增权限数量为: {} 个, 实际新增的权限数量为: {} 个", permissionsDTOList.size(), permissions.size());
             throw new ServiceException("create.permission.fail");
         }
         // 9. 输出日志
@@ -224,9 +225,10 @@ public class PermissionsService {
             if (Objects.isNull(permissionsDTO.getId())) {
                 throw new ServiceException("data.incomplete");
             } else {
-                // 权限名称、权限代码、权限状态不能同时为空
+                // 权限名称、权限代码、权限类型、权限状态不能为空
                 if (StrUtil.isBlank(permissionsDTO.getName())
                         && StrUtil.isBlank(permissionsDTO.getCode())
+                        && Objects.isNull(permissionsDTO.getType())
                         && Objects.isNull(permissionsDTO.getStatus())) {
                     throw new ServiceException("data.incomplete");
                 }
@@ -257,6 +259,9 @@ public class PermissionsService {
             }
             if (StrUtil.isNotBlank(permissionsDTO.getCode())) {
                 permission.setCode(permissionsDTO.getCode());
+            }
+            if (Objects.nonNull(permissionsDTO.getType())){
+                permission.setType(permissionsDTO.getType());
             }
             if (Objects.nonNull(permissionsDTO.getStatus())) {
                 permission.setStatus(permissionsDTO.getStatus());
@@ -343,5 +348,27 @@ public class PermissionsService {
         // 1. 获取当前登录用户ID
         Long loginId = StpUtil.getLoginIdAsLong();
         return this.getPermissionListByAccountIds(PermissionsDTO.builder().accountId(loginId).build(), Boolean.TRUE);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void assignedRoleForPermissions(PermissionsDTO permissionsDTO) {
+        // 1. 判断当前账户是否拥有授予角色权限的权限
+        if (!StpUtil.hasPermission(AccountPermissionEnum.ADD_ROLE_PERMISSION_CONNECTION.getCode())) {
+            log.error("当前账户没有添加角色权限的权限!");
+            throw new ServiceException("no.create.permission");
+        }
+        if (!StpUtil.hasPermission(AccountPermissionEnum.DELETE_ROLE_PERMISSION_CONNECTION.getCode())){
+            log.error("当前账户没有删除角色权限的权限!");
+            throw new ServiceException("no.delete.permission");
+        }
+        // 2. 删除当前需要授予角色的所有权限
+        rolePermissionsConnectionService.removeRolePermissionConnectionByPermissionId(RolePermissionConnectionDTO.builder().permissionId(permissionsDTO.getId()).build());
+        // 3. 判断是否拥有操作数据
+        if (CollUtil.isNotEmpty(permissionsDTO.getRoleIds())) {
+            // 4. 构造需要保存的角色和权限关联关系对象 List 集合
+            List<RolePermissionConnectionDTO> rolePermissionConnectionDTOList = permissionsDTO.getRoleIds().stream().map(roleId -> RolePermissionConnectionDTO.builder().permissionId(permissionsDTO.getId()).roleId(roleId).build()).collect(Collectors.toList());
+            // 5. 添加当前需要授予角色的所有权限
+            rolePermissionsConnectionService.addRolePermissionConnection(rolePermissionConnectionDTOList);
+        }
     }
 }
