@@ -6,6 +6,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * CLASS_NAME: AccountDTO.java
@@ -59,4 +60,12 @@ public class AccountDTO extends BaseDTO implements Serializable {
      * 用户名
      */
     private String userAccount;
+    /**
+     * 角色 ID
+     */
+    private Long roleId;
+    /**
+     * 角色 ID 列表
+     */
+    private List<Long> roleIds;
 }
