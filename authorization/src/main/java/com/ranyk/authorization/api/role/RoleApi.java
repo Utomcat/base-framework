@@ -124,7 +124,7 @@ public class RoleApi {
      * 查询角色已关联的权限信息的角色 ID List 集合
      *
      * @param roleDTO 查询条件封装对象, 此处传入的参数为 {@link RoleDTO#getId()} 角色 ID
-     * @return
+     * @return 返回查询到的已关联权限的角色 ID List 集合
      */
     @GetMapping("/query/connection/permission/of/role/id")
     public R<List<String>> queryConnectionPermissionOfRoleId(RoleDTO roleDTO){
