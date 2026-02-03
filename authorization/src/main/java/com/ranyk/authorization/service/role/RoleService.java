@@ -300,33 +300,6 @@ public class RoleService {
     }
 
     /**
-     * 授予角色权限
-     *
-     * @param rolePermissionConnectionDTOList 需要给角色的权限信息 List 集合, 单个权限信息为 {@link RolePermissionConnectionDTO} 角色权限关联关系信息对象;
-     */
-    @Transactional(rollbackFor = Exception.class)
-    public void empowerPermissions(List<RolePermissionConnectionDTO> rolePermissionConnectionDTOList) {
-        // 1. 判断当前账户是否拥有授予角色权限的权限
-        if (!StpUtil.hasPermission(AccountPermissionEnum.ADD_ROLE_PERMISSION_CONNECTION.getCode())) {
-            log.error("当前账户没有添加角色权限的权限!");
-            throw new ServiceException("no.create.permission");
-        }
-        if (!StpUtil.hasPermission(AccountPermissionEnum.DELETE_ROLE_PERMISSION_CONNECTION.getCode())){
-            log.error("当前账户没有删除角色权限的权限!");
-            throw new ServiceException("no.delete.permission");
-        }
-        // 2. 判断当前的数据是否存在
-        if (CollUtil.isEmpty(rolePermissionConnectionDTOList) || rolePermissionConnectionDTOList.isEmpty()) {
-            log.error("不存在需要给角色赋予的权限数据,不予进行角色赋权业务!");
-            throw new ServiceException("no.data.need.update");
-        }
-        // 3. 删除当前需要授予角色的所有权限
-        rolePermissionsConnectionService.removeRolePermissionConnectionByRoleId(RolePermissionConnectionDTO.builder().roleIds(rolePermissionConnectionDTOList.stream().map(RolePermissionConnectionDTO::getRoleId).distinct().toList()).build());
-        // 4. 添加当前需要授予角色的所有权限
-        rolePermissionsConnectionService.addRolePermissionConnection(rolePermissionConnectionDTOList);
-    }
-
-    /**
      * 为角色分配账户
      *
      * @param roleDTO 为角色分配账户的参数封装对象, 主要使用 {@link RoleDTO#getId()} 和 {@link RoleDTO#getAccountIds()} 属性
@@ -351,5 +324,32 @@ public class RoleService {
             // 5. 新增账户角色关联关系
             accountRoleConnectionService.addAccountRoleConnection(saveAccountRoleConnectionDTOList);
         }
+    }
+
+    /**
+     * 查询所有有效的角色 List 集合
+     *
+     * @param roleDTO 查询条件封装对象, 此处传入的参数为 {@link RoleDTO#getStatus()} 状态属性
+     * @return 返回查询到的角色信息 List 集合, 单个参见 {@link RoleDTO}
+     */
+    public List<RoleDTO> queryAllEffectiveRole(RoleDTO roleDTO) {
+        List<Role> roles = Optional.of(roleRepository.findByStatus(roleDTO.getStatus())).orElse(Collections.emptyList());
+        return BeanUtil.copyToList(roles, RoleDTO.class);
+    }
+
+    /**
+     * 角色已关联权限信息的角色 ID List 集合
+     *
+     * @param roleDTO 角色信息查询条件封装对象, 此处传入的入参为 {@link RoleDTO#getPermissionId()} 权限 ID 属性
+     * @return 返回查询到的已关联权限的角色信息 ID, 封装在 {@link RoleDTO#getIds()} 属性中
+     */
+    public RoleDTO queryConnectionPermissionOfRoleId(RoleDTO roleDTO) {
+        // 通过权限ID 获取已关联权限的角色权限关联关系的角色ID
+        RolePermissionConnectionDTO rolePermissionConnectionDTO = rolePermissionsConnectionService.queryRolePermissionConnectionByPermissionId(RolePermissionConnectionDTO.builder().permissionIds(Collections.singletonList(roleDTO.getPermissionId())).build());
+        // 构造返回结果对象
+        if (CollUtil.isEmpty(rolePermissionConnectionDTO.getRoleIds())){
+            return RoleDTO.builder().ids(Collections.emptyList()).build();
+        }
+        return RoleDTO.builder().ids(rolePermissionConnectionDTO.getRoleIds()).build();
     }
 }
