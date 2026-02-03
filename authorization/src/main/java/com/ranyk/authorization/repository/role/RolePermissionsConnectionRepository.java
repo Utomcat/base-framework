@@ -28,9 +28,9 @@ public interface RolePermissionsConnectionRepository extends JpaRepository<RoleP
     List<RolePermissionConnection> findAllByRoleIdIn(List<Long> roleIds);
 
     /**
-     * 通过角色 ID 列表, 删除对应的角色权限关联信息
+     * 通过权限 ID , 删除对应的角色权限关联信息
      *
-     * @param roleIds 需要删除角色权限关联信息的角色 ID 列表
+     * @param permissionId 需要删除角色权限关联信息的权限 ID
      * @return 删除角色权限关联信息数量
      */
     Long deleteByPermissionIdEquals(Long permissionId);
