@@ -15,6 +15,7 @@ import com.ranyk.model.business.role.dto.RolePermissionConnectionDTO;
 import com.ranyk.model.business.role.entity.Role;
 import com.ranyk.model.business.role.vo.RoleVO;
 import com.ranyk.model.exception.service.ServiceException;
+import com.ranyk.model.exception.user.UserException;
 import com.ranyk.model.page.vo.PageVO;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -323,5 +324,32 @@ public class RoleService {
         rolePermissionsConnectionService.removeRolePermissionConnectionByRoleId(RolePermissionConnectionDTO.builder().roleIds(rolePermissionConnectionDTOList.stream().map(RolePermissionConnectionDTO::getRoleId).distinct().toList()).build());
         // 4. 添加当前需要授予角色的所有权限
         rolePermissionsConnectionService.addRolePermissionConnection(rolePermissionConnectionDTOList);
+    }
+
+    /**
+     * 为角色分配账户
+     *
+     * @param roleDTO 为角色分配账户的参数封装对象, 主要使用 {@link RoleDTO#getId()} 和 {@link RoleDTO#getAccountIds()} 属性
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void assignedAccountForRole(RoleDTO roleDTO) {
+        // 1. 判断当前用户是否拥有账户角色添加和删除权限
+        if (!StpUtil.hasPermission(AccountPermissionEnum.ADD_ACCOUNT_ROLE_CONNECTION.getCode())) {
+            log.error("当前用户没有账户角色添加权限!");
+            throw new UserException("no.create.permission");
+        }
+        if (!StpUtil.hasPermission(AccountPermissionEnum.DELETE_ACCOUNT_ROLE_CONNECTION.getCode())) {
+            log.error("当前用户没有账户角色删除权限!");
+            throw new UserException("no.delete.permission");
+        }
+        // 2. 根据角色 ID 删除当前已绑定的账户和角色关联关系
+        accountRoleConnectionService.removeAccountRoleConnectionByRoleId(AccountRoleConnectionDTO.builder().roleId(roleDTO.getId()).build());
+        // 3. 判断是否拥有操作数据
+        if (CollUtil.isNotEmpty(roleDTO.getAccountIds())) {
+            // 4. 构造需要保存的账户和角色关联关系对象 List 集合
+            List<AccountRoleConnectionDTO> saveAccountRoleConnectionDTOList = roleDTO.getAccountIds().stream().map(accountId -> AccountRoleConnectionDTO.builder().accountId(accountId).roleId(roleDTO.getId()).build()).collect(Collectors.toList());
+            // 5. 新增账户角色关联关系
+            accountRoleConnectionService.addAccountRoleConnection(saveAccountRoleConnectionDTOList);
+        }
     }
 }
