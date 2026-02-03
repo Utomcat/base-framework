@@ -44,4 +44,12 @@ public class RoleDTO extends BaseDTO implements Serializable {
      * 账户数据 ID List 集合
      */
     private List<Long> accountIds;
+    /**
+     * 权限数据 ID
+     */
+    private Long permissionId;
+    /**
+     * 权限数据 ID List 集合
+     */
+    private List<Long> permissionIds;
 }
