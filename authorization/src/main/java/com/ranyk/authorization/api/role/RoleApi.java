@@ -97,6 +97,18 @@ public class RoleApi {
     }
 
     /**
+     * 为角色分配账户
+     *
+     * @param roleDTO 角色账户关联参数封装对象, 其中主要使用封装的 {@link RoleDTO#getId()} 和 {@link RoleDTO#getAccountIds()} 属性
+     * @return 为角色分配账户结果
+     */
+    @PostMapping("/assigned/account")
+    public R<String> assignedAccountForRole(@RequestBody RoleDTO roleDTO) {
+        roleService.assignedAccountForRole(roleDTO);
+        return R.ok("为账户分配角色成功!");
+    }
+
+    /**
      * 授予角色权限
      *
      * @param rolePermissionConnectionDTOList 授予角色权限参数封装对象 List 集合, 单个角色权限信息为 {@link RolePermissionConnectionDTO} 角色权限信息对象
