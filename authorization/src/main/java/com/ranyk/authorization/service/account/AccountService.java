@@ -2,7 +2,6 @@ package com.ranyk.authorization.service.account;
 
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.digest.DigestUtil;
 import com.ranyk.authorization.repository.account.AccountRepository;
@@ -259,33 +258,6 @@ public class AccountService {
     }
 
     /**
-     * 为账户分配角色信息
-     *
-     * @param accountRoleConnectionDTOList 账户角色信息接受对象 List 集合, 单个账户角色信息为 {@link AccountRoleConnectionDTO}
-     */
-    @Transactional(rollbackFor = Exception.class)
-    public void allocationAccountRoleConnection(List<AccountRoleConnectionDTO> accountRoleConnectionDTOList) {
-        // 1. 判断当前用户是否拥有账户角色添加和删除权限
-        if (!StpUtil.hasPermission(AccountPermissionEnum.ADD_ACCOUNT_ROLE_CONNECTION.getCode())) {
-            log.error("当前用户没有账户角色添加权限!");
-            throw new UserException("no.create.permission");
-        }
-        if (!StpUtil.hasPermission(AccountPermissionEnum.DELETE_ACCOUNT_ROLE_CONNECTION.getCode())) {
-            log.error("当前用户没有账户角色删除权限!");
-            throw new UserException("no.delete.permission");
-        }
-        // 2. 判断是否拥有操作数据
-        if (CollUtil.isEmpty(accountRoleConnectionDTOList) || accountRoleConnectionDTOList.isEmpty()) {
-            log.error("没有需要给账户分配的角色数据!");
-            throw new ServiceException("no.data.need.create");
-        }
-        // 3. 根据账户 ID 删除当前与该账户关联的角色关联信息
-        accountRoleConnectionService.removeAccountRoleConnectionByAccountId(AccountRoleConnectionDTO.builder().accountIds(accountRoleConnectionDTOList.stream().map(AccountRoleConnectionDTO::getAccountId).distinct().toList()).build());
-        // 4. 新增账户角色关联关系
-        accountRoleConnectionService.addAccountRoleConnection(accountRoleConnectionDTOList);
-    }
-
-    /**
      * 通过账户 ID 查询账户关联的用户 ID
      *
      * @param accountDTO 账户 ID 信息数据封装对象, 属性值封装, 参见 {@link AccountDTO#getId()} 属性
@@ -349,5 +321,36 @@ public class AccountService {
                 .totalPage(1)
                 .total(Long.parseLong(String.valueOf(accountList.size())))
                 .build();
+    }
+
+    /**
+     * 查询账户未绑定的角色信息的账户 List 集合
+     *
+     * @param accountDTO 查询条件封装对象, 此处传入的参数为 {@link AccountDTO#getStatus()} 属性
+     * @return 返回查询到的账户信息 List 集合, 单个参见 {@link AccountDTO}
+     */
+    public List<AccountDTO> queryAllEffectiveAccount(AccountDTO accountDTO) {
+        // 获取剩下未绑定账户角色关联关系的账户数据
+        List<Account> accountList = Optional.of(accountRepository.findByStatus(accountDTO.getStatus())).orElse(Collections.emptyList());
+        // 置空所有的用户密码
+        accountList.forEach(account -> account.setPassword(""));
+        // 构造返回结果对象
+        return BeanUtil.copyToList(accountList, AccountDTO.class);
+    }
+
+    /**
+     * 账户已绑定的角色信息的账户 List 集合
+     *
+     * @param accountDTO 账户信息查询条件封装对象, 此处传入的参数为 {@link AccountDTO#getRoleId()} 属性
+     * @return 返回查询到的已关联角色的账户信息 ID, 封装在 {@link AccountDTO#getIds()} 属性中
+     */
+    public AccountDTO queryConnectionRoleOfAccountId(AccountDTO accountDTO) {
+        // 通过角色 ID 获取已绑定账户角色关联关系的账户ID
+        AccountRoleConnectionDTO accountRoleConnectionDTO = accountRoleConnectionService.queryAccountIdByRoleId(AccountRoleConnectionDTO.builder().roleIds(Collections.singletonList(accountDTO.getRoleId())).build());
+        // 构造返回结果对象
+        if (Objects.isNull(accountRoleConnectionDTO.getAccountIds()) || accountRoleConnectionDTO.getAccountIds().isEmpty()){
+            return AccountDTO.builder().ids(Collections.emptyList()).build();
+        }
+        return AccountDTO.builder().ids(accountRoleConnectionDTO.getAccountIds()).build();
     }
 }
