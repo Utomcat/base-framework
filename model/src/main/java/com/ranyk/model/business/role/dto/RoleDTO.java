@@ -6,6 +6,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * CLASS_NAME: RoleDTO.java
@@ -37,4 +38,10 @@ public class RoleDTO extends BaseDTO implements Serializable {
      * 角色状态: 1: 正常(默认); -1: 删除/停用;
      */
     private Integer status;
+
+    // 以下为额外属性
+    /**
+     * 账户数据 ID List 集合
+     */
+    private List<Long> accountIds;
 }
