@@ -155,5 +155,16 @@ public class PermissionsApi {
         return R.ok(BeanUtil.copyToList(permissionsService.getCurrentUserOfPermissions(), PermissionsVO.class));
     }
 
+    /**
+     * 为权限分配角色
+     *
+     * @param permissionsDTO 权限和角色关联的参数封装对象, 其中主要使用封装的 {@link PermissionsDTO#getId()} 和 {@link PermissionsDTO#getRoleIds()} 属性
+     * @return 返回为权限分配角色的结果
+     */
+    @PostMapping("/assigned/role")
+    public R<String> assignedRoleForPermissions(@RequestBody PermissionsDTO permissionsDTO){
+        permissionsService.assignedRoleForPermissions(permissionsDTO);
+        return R.ok("为权限分配角色成功!");
+    }
 
 }
