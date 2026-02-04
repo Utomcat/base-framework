@@ -290,7 +290,7 @@ public class FileUploadUtils {
              var dis = new DataInputStream(bis);
              var fos = new FileOutputStream(zipFile);
              var bos = new BufferedOutputStream(fos);
-             var zos = new ZipOutputStream(bos);) {
+             var zos = new ZipOutputStream(bos)) {
             // 4. 创建压缩实体对象
             var zipEntry = new ZipEntry(file.getName());
             // 5. 将压缩实体添加进压缩输出流中
