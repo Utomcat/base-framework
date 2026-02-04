@@ -214,7 +214,7 @@ public class AccountService {
             }
             // 动态条件2：status不为空时，精确查询（对标wrapper.eq("status", status)）
             if (Objects.nonNull(accountDTO.getStatus())) {
-                predicates.add(cb.equal(root.get("accountStatus"), accountDTO.getStatus()));
+                predicates.add(cb.equal(root.get("status"), accountDTO.getStatus()));
             }
             // 动态条件3：id不为空时，精确查询（对标wrapper.eq("id", id)）
             if (Objects.nonNull(accountDTO.getId())) {
