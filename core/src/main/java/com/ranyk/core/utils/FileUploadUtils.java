@@ -106,7 +106,7 @@ public class FileUploadUtils {
     public static void writeFile(byte[] source, String path) {
         try {
             var bais = new ByteArrayInputStream(source);
-            var fos = new FileOutputStream(new File(path));
+            var fos = new FileOutputStream(path);
             writeFile(bais, fos);
         } catch (Exception e) {
             log.error("将对应的文件写入指定位置的文件中发生异常,异常信息为: ", e);
