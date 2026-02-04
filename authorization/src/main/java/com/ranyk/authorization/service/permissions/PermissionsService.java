@@ -347,7 +347,7 @@ public class PermissionsService {
     public List<PermissionsDTO> getCurrentUserOfPermissions() {
         // 1. 获取当前登录用户ID
         Long loginId = StpUtil.getLoginIdAsLong();
-        return this.getPermissionListByAccountIds(PermissionsDTO.builder().accountId(loginId).build(), Boolean.TRUE);
+        return this.getPermissionListByAccountIds(PermissionsDTO.builder().accountId(loginId).build(), Boolean.FALSE);
     }
 
     @Transactional(rollbackFor = Exception.class)
